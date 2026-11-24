@@ -105,9 +105,9 @@ def main() -> int:
     args = parser.parse_args()
 
     base_dir = Path(args.base_dir).resolve()
-    inspect_script = base_dir / "inspect_server.py"
-    mutate_script = base_dir / "mutate_server.py"
-    driver_script = base_dir / "two_way_hateoas_driver.py"
+    inspect_script = base_dir / "a.py"
+    mutate_script = base_dir / "b.py"
+    driver_script = base_dir / "c.py"
 
     for required in (inspect_script, mutate_script, driver_script):
         if not required.exists():
