@@ -1,4 +1,5 @@
 import argparse
+import copy
 import json
 import time
 from urllib.error import HTTPError, URLError
@@ -32,6 +33,73 @@ def req_json(url: str, method: str = "GET", reader: str = "client", timeout: flo
         return json.loads(resp.read().decode("utf-8"))
 
 
+def extract_comparable_state(doc: dict) -> dict:
+    """Pull relevant state fields from a HATEOAS response or /peer snapshot."""
+    if not isinstance(doc, dict):
+        return {}
+    if isinstance(doc.get("state"), dict):
+        src = doc["state"]
+    else:
+        src = doc
+
+    prime_check = doc.get("prime_check") if isinstance(doc.get("prime_check"), dict) else {}
+    out = {}
+    for key in ("largest_prime", "candidate", "schema", "document", "last_mode", "last_actor", "saved_at"):
+        if key in src:
+            out[key] = copy.deepcopy(src[key])
+        elif key == "largest_prime" and "largest_prime" in prime_check:
+            out["largest_prime"] = prime_check["largest_prime"]
+        elif key == "candidate" and "n" in prime_check:
+            out["candidate"] = prime_check["n"]
+    return out
+
+
+def compute_json_diff(prev_state: dict, curr_state: dict, path: str = "$") -> dict:
+    """Compute a structured JSON diff with added, removed, and changed entries."""
+    diff = {"added": {}, "removed": {}, "changed": {}}
+
+    if not isinstance(prev_state, dict) or not isinstance(curr_state, dict):
+        if prev_state != curr_state:
+            diff["changed"][path] = {"from": prev_state, "to": curr_state}
+        return diff
+
+    prev_keys = set(prev_state.keys())
+    curr_keys = set(curr_state.keys())
+
+    for key in sorted(curr_keys - prev_keys):
+        diff["added"][f"{path}.{key}"] = curr_state[key]
+
+    for key in sorted(prev_keys - curr_keys):
+        diff["removed"][f"{path}.{key}"] = prev_state[key]
+
+    for key in sorted(prev_keys & curr_keys):
+        p_val = prev_state[key]
+        c_val = curr_state[key]
+        child_path = f"{path}.{key}"
+        if p_val == c_val:
+            continue
+        if isinstance(p_val, dict) and isinstance(c_val, dict):
+            sub = compute_json_diff(p_val, c_val, child_path)
+            diff["added"].update(sub["added"])
+            diff["removed"].update(sub["removed"])
+            diff["changed"].update(sub["changed"])
+        else:
+            diff["changed"][child_path] = {"from": p_val, "to": c_val}
+
+    return diff
+
+
+def format_diff_compact(diff: dict) -> str:
+    parts = []
+    for k, v in diff.get("changed", {}).items():
+        parts.append(f"~{k}: {json.dumps(v.get('from'))} -> {json.dumps(v.get('to'))}")
+    for k, v in diff.get("added", {}).items():
+        parts.append(f"+{k}: {json.dumps(v)}")
+    for k, v in diff.get("removed", {}).items():
+        parts.append(f"-{k}: {json.dumps(v)}")
+    return " | ".join(parts) if parts else "(no state diff)"
+
+
 def format_option_value(opt) -> str:
     if isinstance(opt, (dict, list)):
         return json.dumps(opt)
@@ -45,7 +113,6 @@ def pick_distinct_option(
     hop_index: int,
     fallback: str = "7",
 ) -> str:
-    """Choose a distinct option value not yet used for this (server, property) key."""
     formatted_opts = [format_option_value(opt) for opt in options_list]
     current_str = format_option_value(current_val) if current_val is not None else None
 
@@ -88,9 +155,7 @@ def pick_next_link(current_doc: dict, hop_index: int, fallback_base: str) -> tup
     if rec_rel and rec_rel in links:
         return rec_rel, links[rec_rel]
 
-    # In an infinite loop, alternate between peer_base and peer_options if recommended_rel is absent
-    fallback_rels = ["peer_base", "peer_options", "options", "self"]
-    for rel in fallback_rels:
+    for rel in ("peer_base", "peer_options", "options", "self"):
         if rel in links:
             return rel, links[rel]
 
@@ -100,8 +165,8 @@ def pick_next_link(current_doc: dict, hop_index: int, fallback_base: str) -> tup
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Run an infinite two-way HATEOAS loop bounded by a timeout, querying /options, "
-            "applying distinct values, saving state with flushed status updates, and resetting both servers."
+            "Run a timeout-bounded infinite two-way HATEOAS loop with distinct /options values, "
+            "flushed status updates, and JSON state diffs per hop."
         )
     )
     parser.add_argument("--inspect-base", default=INSPECT_DEFAULT, help="Inspect server base URL")
@@ -141,6 +206,11 @@ def main() -> None:
         help="Optional pause in seconds between hops (default: %(default)s)",
     )
     parser.add_argument(
+        "--json-diff",
+        action="store_true",
+        help="Print structured JSON diff objects in addition to the compact single-line diff",
+    )
+    parser.add_argument(
         "--skip-reset",
         action="store_true",
         help="Leave mutated/saved state on both servers instead of resetting at the end",
@@ -153,6 +223,7 @@ def main() -> None:
     peer_base = mut_base if args.server == "inspect" else insp_base
 
     used_options: dict[tuple[str, str], set[str]] = {}
+    all_diffs: list[dict] = []
 
     def get_used_set(base_url: str, prop_name: str) -> set[str]:
         return used_options.setdefault((base_url, str(prop_name)), set())
@@ -163,7 +234,12 @@ def main() -> None:
     stop_reason = "completed"
 
     try:
-        # 1. Initial /options query
+        # Baseline peer snapshot before initial mutation
+        baseline_peer = req_json(f"{peer_base}/peer", method="GET")
+        tracked_state = extract_comparable_state(baseline_peer)
+        log_status(f"[BASE] Initial state={json.dumps(tracked_state)}")
+
+        # 1. Query /options
         q_prop = quote(args.prop)
         log_status(f"[INIT] Querying {primary_base}/options?prop={args.prop} ...")
         opts_doc = req_json(f"{primary_base}/options?prop={q_prop}", method="GET")
@@ -193,7 +269,11 @@ def main() -> None:
             f"{primary_base}/set?prop={q_prop}&val={quote(chosen_val)}",
             method="POST",
         )
-        log_status(f"[SET ] {primary_base}/set -> {set_doc.get('updated')}")
+        next_state = extract_comparable_state(set_doc) or {**tracked_state, args.prop: set_doc.get("updated", {}).get("value")}
+        init_diff = compute_json_diff(tracked_state, next_state)
+        tracked_state = next_state
+        all_diffs.append({"phase": "init_set", "diff": init_diff})
+        log_status(f"[SET ] {primary_base}/set -> {set_doc.get('updated')} | DIFF: {format_diff_compact(init_diff)}")
 
         # 3. Save initial state
         save_doc = req_json(f"{primary_base}/save", method="POST")
@@ -258,16 +338,25 @@ def main() -> None:
                 reader=args.server,
             )
             save_hop_doc = req_json(f"{hop_base_url}/save", method="POST", reader=args.server)
-            log_status(
-                f"[HOP {hop:03d} | DONE] updated={set_hop_doc.get('updated')} | "
-                f"saved={save_hop_doc.get('saved')}"
-            )
-
             current_doc = req_json(
                 f"{hop_base_url}/?reader={args.server}",
                 method="GET",
                 reader=args.server,
             )
+
+            updated_state = extract_comparable_state(current_doc)
+            if not updated_state:
+                updated_state = extract_comparable_state(set_hop_doc)
+            hop_diff = compute_json_diff(tracked_state, updated_state)
+            tracked_state = updated_state
+            all_diffs.append({"hop": hop, "prop": hop_prop, "diff": hop_diff})
+
+            log_status(
+                f"[HOP {hop:03d} | DIFF] saved={save_hop_doc.get('saved')} | "
+                f"{format_diff_compact(hop_diff)}"
+            )
+            if args.json_diff:
+                log_status(f"[HOP {hop:03d} | JSON] {json.dumps(hop_diff)}")
 
             if args.step_delay > 0:
                 time.sleep(min(args.step_delay, max(0.0, deadline - time.monotonic())))
@@ -284,7 +373,10 @@ def main() -> None:
         log_status("Ensure both inspect_server.py (:8001) and mutate_server.py (:8002) are running.")
         raise SystemExit(1) from exc
 
-    log_status(f"\n[SUMMARY] Hops={hop} | Elapsed={time.monotonic() - start_time:.2f}s | Stop={stop_reason}")
+    log_status(
+        f"\n[SUMMARY] Hops={hop} | DiffEvents={len(all_diffs)} | "
+        f"Elapsed={time.monotonic() - start_time:.2f}s | Stop={stop_reason}"
+    )
 
     # 5. Reset both servers
     if not args.skip_reset:
