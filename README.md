@@ -1,311 +1,1101 @@
-```[BASE] Initial state={"largest_prime": 47, "candidate": 53, "schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}, "document": {"count": 3}, "last_mode": "step-prime", "last_actor": "client", "saved_at": "inspect_state.json"}
-[INIT] Querying http://127.0.0.1:8002/options?prop=candidate ...
-[INIT] Current=53 | Options=[53, 54, 53]
-[INIT] Peer (inspect) options=[53, 54, 53]
-[SET ] http://127.0.0.1:8002/set -> {'property': 'candidate', 'value': 54} | DIFF: ~$.candidate: 53 -> 54 | ~$.last_mode: "step-prime" -> "set:candidate" | ~$.saved_at: "inspect_state.json" -> "mutate_state.json"
-[SAVE] http://127.0.0.1:8002/save -> file=mutate_state.json saved=True
-[LOOP] Starting infinite loop from http://127.0.0.1:8001/?reader=mutate (timeout=10.0s, max_hops=infinite)
-[HOP 001 | + 0.06s | rem= 9.94s] Following [peer_save_state] POST http://127.0.0.1:8002/save?reader=inspect
-[HOP 001 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=55 (used=2)
-[HOP 001 | DIFF] saved=True | ~$.candidate: 54 -> 56 | ~$.last_actor: "client" -> "mutate" | ~$.last_mode: "set:candidate" -> "step-prime"
-[HOP 001 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 54, "to": 56}, "$.last_actor": {"from": "client", "to": "mutate"}, "$.last_mode": {"from": "set:candidate", "to": "step-prime"}}}
-[HOP 002 | + 0.18s | rem= 9.82s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 002 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=56 (used=1)
-[HOP 002 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 002 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 003 | + 0.29s | rem= 9.71s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 003 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=57 (used=3)
-[HOP 003 | DIFF] saved=True | ~$.candidate: 56 -> 58 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 003 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 56, "to": 58}}}
-[HOP 004 | + 0.41s | rem= 9.59s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 004 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=58 (used=2)
-[HOP 004 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 004 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 005 | + 0.53s | rem= 9.47s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 005 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=59 (used=4)
-[HOP 005 | DIFF] saved=True | ~$.candidate: 58 -> 60 | ~$.largest_prime: 47 -> 59 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 005 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 58, "to": 60}, "$.largest_prime": {"from": 47, "to": 59}}}
-[HOP 006 | + 0.65s | rem= 9.35s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 006 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=60 (used=3)
-[HOP 006 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 006 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 007 | + 0.77s | rem= 9.23s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 007 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=61 (used=5)
-[HOP 007 | DIFF] saved=True | ~$.candidate: 60 -> 62 | ~$.largest_prime: 59 -> 61 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 007 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 60, "to": 62}, "$.largest_prime": {"from": 59, "to": 61}}}
-[HOP 008 | + 0.96s | rem= 9.04s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 008 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=62 (used=4)
-[HOP 008 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 008 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 009 | + 1.08s | rem= 8.92s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 009 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=63 (used=6)
-[HOP 009 | DIFF] saved=True | ~$.candidate: 62 -> 64 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 009 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 62, "to": 64}}}
-[HOP 010 | + 1.21s | rem= 8.79s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 010 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=64 (used=5)
-[HOP 010 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 010 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 011 | + 1.34s | rem= 8.66s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 011 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=65 (used=7)
-[HOP 011 | DIFF] saved=True | ~$.candidate: 64 -> 66 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 011 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 64, "to": 66}}}
-[HOP 012 | + 1.47s | rem= 8.53s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 012 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=66 (used=6)
-[HOP 012 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 012 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 013 | + 1.61s | rem= 8.39s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 013 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=67 (used=8)
-[HOP 013 | DIFF] saved=True | ~$.candidate: 66 -> 68 | ~$.largest_prime: 61 -> 67 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 013 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 66, "to": 68}, "$.largest_prime": {"from": 61, "to": 67}}}
-[HOP 014 | + 1.75s | rem= 8.25s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 014 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=68 (used=7)
-[HOP 014 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 014 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 015 | + 1.88s | rem= 8.12s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 015 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=69 (used=9)
-[HOP 015 | DIFF] saved=True | ~$.candidate: 68 -> 70 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 015 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 68, "to": 70}}}
-[HOP 016 | + 2.00s | rem= 8.00s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 016 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=70 (used=8)
-[HOP 016 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 016 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 017 | + 2.11s | rem= 7.89s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 017 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=71 (used=10)
-[HOP 017 | DIFF] saved=True | ~$.candidate: 70 -> 72 | ~$.largest_prime: 67 -> 71 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 017 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 70, "to": 72}, "$.largest_prime": {"from": 67, "to": 71}}}
-[HOP 018 | + 2.24s | rem= 7.76s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 018 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=72 (used=9)
-[HOP 018 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 018 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 019 | + 2.36s | rem= 7.64s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 019 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=73 (used=11)
-[HOP 019 | DIFF] saved=True | ~$.candidate: 72 -> 74 | ~$.largest_prime: 71 -> 73 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 019 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 72, "to": 74}, "$.largest_prime": {"from": 71, "to": 73}}}
-[HOP 020 | + 2.59s | rem= 7.41s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 020 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=74 (used=10)
-[HOP 020 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 020 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 021 | + 2.73s | rem= 7.27s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 021 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=75 (used=12)
-[HOP 021 | DIFF] saved=True | ~$.candidate: 74 -> 76 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 021 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 74, "to": 76}}}
-[HOP 022 | + 2.84s | rem= 7.16s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 022 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=76 (used=11)
-[HOP 022 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 022 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 023 | + 2.96s | rem= 7.04s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 023 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=77 (used=13)
-[HOP 023 | DIFF] saved=True | ~$.candidate: 76 -> 78 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 023 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 76, "to": 78}}}
-[HOP 024 | + 3.08s | rem= 6.92s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 024 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=78 (used=12)
-[HOP 024 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 024 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 025 | + 3.20s | rem= 6.80s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 025 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=79 (used=14)
-[HOP 025 | DIFF] saved=True | ~$.candidate: 78 -> 80 | ~$.largest_prime: 73 -> 79 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 025 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 78, "to": 80}, "$.largest_prime": {"from": 73, "to": 79}}}
-[HOP 026 | + 3.32s | rem= 6.68s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 026 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=80 (used=13)
-[HOP 026 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 026 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 027 | + 3.46s | rem= 6.54s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 027 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=81 (used=15)
-[HOP 027 | DIFF] saved=True | ~$.candidate: 80 -> 82 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 027 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 80, "to": 82}}}
-[HOP 028 | + 3.63s | rem= 6.37s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 028 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=82 (used=14)
-[HOP 028 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 028 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 029 | + 3.77s | rem= 6.23s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 029 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=83 (used=16)
-[HOP 029 | DIFF] saved=True | ~$.candidate: 82 -> 84 | ~$.largest_prime: 79 -> 83 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 029 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 82, "to": 84}, "$.largest_prime": {"from": 79, "to": 83}}}
-[HOP 030 | + 3.89s | rem= 6.11s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 030 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=84 (used=15)
-[HOP 030 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 030 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 031 | + 4.02s | rem= 5.98s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 031 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=85 (used=17)
-[HOP 031 | DIFF] saved=True | ~$.candidate: 84 -> 86 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 031 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 84, "to": 86}}}
-[HOP 032 | + 4.19s | rem= 5.81s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 032 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=86 (used=16)
-[HOP 032 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 032 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 033 | + 4.32s | rem= 5.68s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 033 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=87 (used=18)
-[HOP 033 | DIFF] saved=True | ~$.candidate: 86 -> 88 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 033 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 86, "to": 88}}}
-[HOP 034 | + 4.43s | rem= 5.57s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 034 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=88 (used=17)
-[HOP 034 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 034 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 035 | + 4.56s | rem= 5.44s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 035 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=89 (used=19)
-[HOP 035 | DIFF] saved=True | ~$.candidate: 88 -> 90 | ~$.largest_prime: 83 -> 89 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 035 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 88, "to": 90}, "$.largest_prime": {"from": 83, "to": 89}}}
-[HOP 036 | + 4.68s | rem= 5.32s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 036 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=90 (used=18)
-[HOP 036 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 036 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 037 | + 4.80s | rem= 5.20s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 037 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=91 (used=20)
-[HOP 037 | DIFF] saved=True | ~$.candidate: 90 -> 92 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 037 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 90, "to": 92}}}
-[HOP 038 | + 4.92s | rem= 5.08s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 038 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=92 (used=19)
-[HOP 038 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 038 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 039 | + 5.05s | rem= 4.95s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 039 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=93 (used=21)
-[HOP 039 | DIFF] saved=True | ~$.candidate: 92 -> 94 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 039 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 92, "to": 94}}}
-[HOP 040 | + 5.17s | rem= 4.83s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 040 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=94 (used=20)
-[HOP 040 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 040 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 041 | + 5.38s | rem= 4.62s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 041 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=95 (used=22)
-[HOP 041 | DIFF] saved=True | ~$.candidate: 94 -> 96 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 041 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 94, "to": 96}}}
-[HOP 042 | + 5.51s | rem= 4.49s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 042 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=96 (used=21)
-[HOP 042 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 042 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 043 | + 5.62s | rem= 4.38s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 043 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=97 (used=23)
-[HOP 043 | DIFF] saved=True | ~$.candidate: 96 -> 98 | ~$.largest_prime: 89 -> 97 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 043 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 96, "to": 98}, "$.largest_prime": {"from": 89, "to": 97}}}
-[HOP 044 | + 5.75s | rem= 4.25s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 044 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=98 (used=22)
-[HOP 044 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 044 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 045 | + 5.87s | rem= 4.13s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 045 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=99 (used=24)
-[HOP 045 | DIFF] saved=True | ~$.candidate: 98 -> 100 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 045 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 98, "to": 100}}}
-[HOP 046 | + 6.00s | rem= 4.00s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 046 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=100 (used=23)
-[HOP 046 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 046 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 047 | + 6.11s | rem= 3.89s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 047 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=101 (used=25)
-[HOP 047 | DIFF] saved=True | ~$.candidate: 100 -> 102 | ~$.largest_prime: 97 -> 101 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 047 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 100, "to": 102}, "$.largest_prime": {"from": 97, "to": 101}}}
-[HOP 048 | + 6.25s | rem= 3.75s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 048 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=102 (used=24)
-[HOP 048 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 048 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 049 | + 6.37s | rem= 3.63s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 049 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=103 (used=26)
-[HOP 049 | DIFF] saved=True | ~$.candidate: 102 -> 104 | ~$.largest_prime: 101 -> 103 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 049 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 102, "to": 104}, "$.largest_prime": {"from": 101, "to": 103}}}
-[HOP 050 | + 6.49s | rem= 3.51s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 050 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=104 (used=25)
-[HOP 050 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 050 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 051 | + 6.62s | rem= 3.38s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 051 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=105 (used=27)
-[HOP 051 | DIFF] saved=True | ~$.candidate: 104 -> 106 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 051 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 104, "to": 106}}}
-[HOP 052 | + 6.82s | rem= 3.18s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 052 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=106 (used=26)
-[HOP 052 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 052 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 053 | + 6.93s | rem= 3.07s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 053 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=107 (used=28)
-[HOP 053 | DIFF] saved=True | ~$.candidate: 106 -> 108 | ~$.largest_prime: 103 -> 107 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 053 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 106, "to": 108}, "$.largest_prime": {"from": 103, "to": 107}}}
-[HOP 054 | + 7.07s | rem= 2.93s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 054 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=108 (used=27)
-[HOP 054 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 054 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 055 | + 7.21s | rem= 2.79s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 055 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=109 (used=29)
-[HOP 055 | DIFF] saved=True | ~$.candidate: 108 -> 110 | ~$.largest_prime: 107 -> 109 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 055 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 108, "to": 110}, "$.largest_prime": {"from": 107, "to": 109}}}
-[HOP 056 | + 7.35s | rem= 2.65s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 056 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=110 (used=28)
-[HOP 056 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 056 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 057 | + 7.47s | rem= 2.53s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 057 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=111 (used=30)
-[HOP 057 | DIFF] saved=True | ~$.candidate: 110 -> 112 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 057 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 110, "to": 112}}}
-[HOP 058 | + 7.59s | rem= 2.41s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 058 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=112 (used=29)
-[HOP 058 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 058 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 059 | + 7.71s | rem= 2.29s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 059 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=113 (used=31)
-[HOP 059 | DIFF] saved=True | ~$.candidate: 112 -> 114 | ~$.largest_prime: 109 -> 113 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 059 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 112, "to": 114}, "$.largest_prime": {"from": 109, "to": 113}}}
-[HOP 060 | + 7.84s | rem= 2.16s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 060 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=114 (used=30)
-[HOP 060 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 060 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 061 | + 7.95s | rem= 2.05s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 061 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=115 (used=32)
-[HOP 061 | DIFF] saved=True | ~$.candidate: 114 -> 116 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 061 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 114, "to": 116}}}
-[HOP 062 | + 8.08s | rem= 1.92s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 062 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=116 (used=31)
-[HOP 062 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 062 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 063 | + 8.40s | rem= 1.60s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 063 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=117 (used=33)
-[HOP 063 | DIFF] saved=True | ~$.candidate: 116 -> 118 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 063 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 116, "to": 118}}}
-[HOP 064 | + 8.52s | rem= 1.48s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 064 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=118 (used=32)
-[HOP 064 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 064 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 065 | + 8.64s | rem= 1.36s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 065 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=119 (used=34)
-[HOP 065 | DIFF] saved=True | ~$.candidate: 118 -> 120 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 065 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 118, "to": 120}}}
-[HOP 066 | + 8.77s | rem= 1.23s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 066 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=120 (used=33)
-[HOP 066 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 066 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 067 | + 8.89s | rem= 1.11s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 067 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=121 (used=35)
-[HOP 067 | DIFF] saved=True | ~$.candidate: 120 -> 122 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 067 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 120, "to": 122}}}
-[HOP 068 | + 9.01s | rem= 0.99s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 068 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=122 (used=34)
-[HOP 068 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 068 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 069 | + 9.13s | rem= 0.87s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 069 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=123 (used=36)
-[HOP 069 | DIFF] saved=True | ~$.candidate: 122 -> 124 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 069 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 122, "to": 124}}}
-[HOP 070 | + 9.27s | rem= 0.73s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 070 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=124 (used=35)
-[HOP 070 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 070 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 071 | + 9.39s | rem= 0.61s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 071 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=125 (used=37)
-[HOP 071 | DIFF] saved=True | ~$.candidate: 124 -> 126 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 071 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 124, "to": 126}}}
-[HOP 072 | + 9.51s | rem= 0.49s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 072 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=126 (used=36)
-[HOP 072 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 072 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 073 | + 9.66s | rem= 0.34s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 073 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=127 (used=38)
-[HOP 073 | DIFF] saved=True | ~$.candidate: 126 -> 128 | ~$.largest_prime: 113 -> 127 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 073 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 126, "to": 128}, "$.largest_prime": {"from": 113, "to": 127}}}
-[HOP 074 | + 9.82s | rem= 0.18s] Following [peer_options] GET http://127.0.0.1:8001/options?prop=candidate&reader=mutate
-[HOP 074 | OPT ] http://127.0.0.1:8001/options?prop=candidate -> picked=128 (used=37)
-[HOP 074 | DIFF] saved=True | -$.document: {"count": 3} | -$.last_actor: "mutate" | -$.last_mode: "step-prime" | -$.saved_at: "mutate_state.json" | -$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 074 | JSON] {"added": {}, "removed": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "changed": {}}
-[HOP 075 | + 9.94s | rem= 0.06s] Following [peer_options] GET http://127.0.0.1:8002/options?prop=candidate&reader=inspect
-[HOP 075 | OPT ] http://127.0.0.1:8002/options?prop=candidate -> picked=129 (used=39)
-[HOP 075 | DIFF] saved=True | ~$.candidate: 128 -> 130 | +$.document: {"count": 3} | +$.last_actor: "mutate" | +$.last_mode: "step-prime" | +$.saved_at: "mutate_state.json" | +$.schema: {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}
-[HOP 075 | JSON] {"added": {"$.document": {"count": 3}, "$.last_actor": "mutate", "$.last_mode": "step-prime", "$.saved_at": "mutate_state.json", "$.schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}}, "removed": {}, "changed": {"$.candidate": {"from": 128, "to": 130}}}
-[LOOP] Timeout reached (timeout after 10.00s); stopping loop.
+```python d.py --inspect-script a.py --mutate-script b.py --driver-script c.py --lock-file hateoas_io.lock --server mutate --prop largest_fib --timeout-seconds 10.0 --step-delay 0.1 --json-diff```
 
-[SUMMARY] Hops=75 | DiffEvents=76 | Elapsed=10.00s | Stop=timeout after 10.00s
-[RESET] http://127.0.0.1:8002/reset -> True | http://127.0.0.1:8001/reset -> True```
+
+```[INSP_PROC] Callback-driven HATEOAS Inspect server on http://127.0.0.1:8001
+[MUT_PROC] Callback-driven HATEOAS Mutate server on http://127.0.0.1:8002
+[INSP_PROC] [INSPECT :8001] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /peer HTTP/1.1" 200 -
+[DRV_PROC] [BASE] Initial state={"largest_prime": 2, "candidate": 3, "largest_fib": 1, "fib_candidate": 2, "schema": {"type": "object", "required": ["count"], "properties": {"count": {"type": "integer"}}}, "document": {"count": "3"}, "script": ["candidate = 3", "largest_prime = 2", "fib_candidate = 2", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "script_version": 1, "last_mode": "init", "last_actor": "inspect", "saved_at": null}
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=list&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [AST ] Loaded AST functions count=4
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=2 HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=3&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [SET ] Body-free POST -> callback_next=mutate_step_prime | DIFF: ~$.fib_candidate: 2 -> 3 | ~$.largest_fib: 1 -> 2
+[MUT_PROC] [MUTATE  :8002] "POST /save?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=3&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=save HTTP/1.1" 200 -
+[DRV_PROC] [SAVE] Body-free POST saved=True
+[DRV_PROC] [LOOP] Starting callback loop (timeout=10.0s, max_hops=infinite)
+[DRV_PROC] [HOP 001 | + 0.57s | rem= 9.43s] Instruction [mutate_step_fib] POST http://127.0.0.1:8002/act?mode=step-fib&val=3&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-fib&val=3&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=3&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 001 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_prime
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B2%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 001 | PIPE] {"fn": "next_fib_after", "args": [2], "kwargs": {}, "result": 3, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 5, "to": 3}}, "returned_state_updates": {}, "state": {"largest_prime": 2, "candidate": 3, "largest_fib": 3, "fib_candidate": 3, "script_version": 4, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 001 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 4, 'largest_prime': 3, 'fib_candidate': 4, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=3&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=5&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 001 | DIFF] picked=3 | next=mutate_step_prime | ~$.candidate: 3 -> 5 | ~$.fib_candidate: 3 -> 2 | ~$.largest_fib: 2 -> 1 | ~$.largest_prime: 2 -> 3 | ~$.last_actor: "inspect" -> "mutate" | ~$.last_mode: "init" -> "script:exec" | ~$.script: ["candidate = 3", "largest_prime = 2", "fib_candidate = 2", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 3", "largest_prime = 2", "fib_candidate = 3", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 1 -> 4
+[DRV_PROC] [HOP 001 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 3, "to": 5}, "$.fib_candidate": {"from": 3, "to": 2}, "$.largest_fib": {"from": 2, "to": 1}, "$.largest_prime": {"from": 2, "to": 3}, "$.last_actor": {"from": "inspect", "to": "mutate"}, "$.last_mode": {"from": "init", "to": "script:exec"}, "$.script": {"from": ["candidate = 3", "largest_prime = 2", "fib_candidate = 2", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 3", "largest_prime = 2", "fib_candidate = 3", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 1, "to": 4}}}
+[DRV_PROC] [HOP 002 | + 0.79s | rem= 9.21s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=5&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=5&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=5&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 002 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 002 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 5, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 5, "candidate": 7, "largest_fib": 3, "fib_candidate": 2, "script_version": 7, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 002 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 6, 'largest_prime': 5, 'fib_candidate': 6, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=5&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=7&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 002 | DIFF] picked=5 | next=mutate_step_prime | ~$.candidate: 5 -> 7 | ~$.largest_prime: 3 -> 5 | ~$.script: ["candidate = 3", "largest_prime = 2", "fib_candidate = 3", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 5", "largest_prime = 2", "fib_candidate = 5", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 4 -> 7
+[DRV_PROC] [HOP 002 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 5, "to": 7}, "$.largest_prime": {"from": 3, "to": 5}, "$.script": {"from": ["candidate = 3", "largest_prime = 2", "fib_candidate = 3", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 5", "largest_prime = 2", "fib_candidate = 5", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 4, "to": 7}}}
+[DRV_PROC] [HOP 003 | + 1.00s | rem= 9.00s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=7&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=7&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=8&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 003 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 003 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 8, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 7, "candidate": 11, "largest_fib": 5, "fib_candidate": 2, "script_version": 10, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 003 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 8, 'largest_prime': 7, 'fib_candidate': 9, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=8&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=11&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 003 | DIFF] picked=8 | next=mutate_step_prime | ~$.candidate: 7 -> 11 | ~$.largest_prime: 5 -> 7 | ~$.script: ["candidate = 5", "largest_prime = 2", "fib_candidate = 5", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 7", "largest_prime = 2", "fib_candidate = 8", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 7 -> 10
+[DRV_PROC] [HOP 003 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 7, "to": 11}, "$.largest_prime": {"from": 5, "to": 7}, "$.script": {"from": ["candidate = 5", "largest_prime = 2", "fib_candidate = 5", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 7", "largest_prime = 2", "fib_candidate = 8", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 7, "to": 10}}}
+[DRV_PROC] [HOP 004 | + 1.24s | rem= 8.76s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=11&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=11&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=13&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 004 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 004 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 13, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 11, "candidate": 13, "largest_fib": 8, "fib_candidate": 2, "script_version": 13, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 004 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 12, 'largest_prime': 11, 'fib_candidate': 14, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=13&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=13&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 004 | DIFF] picked=13 | next=mutate_step_prime | ~$.candidate: 11 -> 13 | ~$.largest_prime: 7 -> 11 | ~$.script: ["candidate = 7", "largest_prime = 2", "fib_candidate = 8", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 11", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 10 -> 13
+[DRV_PROC] [HOP 004 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 11, "to": 13}, "$.largest_prime": {"from": 7, "to": 11}, "$.script": {"from": ["candidate = 7", "largest_prime = 2", "fib_candidate = 8", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 11", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 10, "to": 13}}}
+[DRV_PROC] [HOP 005 | + 1.43s | rem= 8.57s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=13&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=13&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=21&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 005 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 005 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 21, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 13, "candidate": 17, "largest_fib": 13, "fib_candidate": 2, "script_version": 16, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 005 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 14, 'largest_prime': 13, 'fib_candidate': 22, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=1&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=17&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 005 | DIFF] picked=1 | next=mutate_step_prime | ~$.candidate: 13 -> 17 | ~$.largest_prime: 11 -> 13 | ~$.script: ["candidate = 11", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 13", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 13 -> 16
+[DRV_PROC] [HOP 005 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 13, "to": 17}, "$.largest_prime": {"from": 11, "to": 13}, "$.script": {"from": ["candidate = 11", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 13", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 13, "to": 16}}}
+[DRV_PROC] [HOP 006 | + 1.64s | rem= 8.36s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=17&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=17&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 006 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 006 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {}, "returned_state_updates": {}, "state": {"largest_prime": 17, "candidate": 19, "largest_fib": 1, "fib_candidate": 2, "script_version": 19, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 006 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 18, 'largest_prime': 17, 'fib_candidate': 3, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=7&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=19&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 006 | DIFF] picked=7 | next=mutate_step_prime | ~$.candidate: 17 -> 19 | ~$.largest_prime: 13 -> 17 | ~$.script: ["candidate = 13", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 17", "largest_prime = 2", "fib_candidate = 2", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 16 -> 19
+[DRV_PROC] [HOP 006 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 17, "to": 19}, "$.largest_prime": {"from": 13, "to": 17}, "$.script": {"from": ["candidate = 13", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 17", "largest_prime = 2", "fib_candidate = 2", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 16, "to": 19}}}
+[DRV_PROC] [HOP 007 | + 1.82s | rem= 8.18s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=19&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=19&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=8&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 007 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 007 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 8, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 19, "candidate": 23, "largest_fib": 7, "fib_candidate": 2, "script_version": 22, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 007 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 20, 'largest_prime': 19, 'fib_candidate': 9, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=9&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=23&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 007 | DIFF] picked=9 | next=mutate_step_prime | ~$.candidate: 19 -> 23 | ~$.largest_prime: 17 -> 19 | ~$.script: ["candidate = 17", "largest_prime = 2", "fib_candidate = 2", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 19", "largest_prime = 2", "fib_candidate = 8", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 19 -> 22
+[DRV_PROC] [HOP 007 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 19, "to": 23}, "$.largest_prime": {"from": 17, "to": 19}, "$.script": {"from": ["candidate = 17", "largest_prime = 2", "fib_candidate = 2", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 19", "largest_prime = 2", "fib_candidate = 8", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 19, "to": 22}}}
+[DRV_PROC] [HOP 008 | + 2.01s | rem= 7.99s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=23&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=23&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=13&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 008 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 008 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 13, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 23, "candidate": 29, "largest_fib": 9, "fib_candidate": 2, "script_version": 25, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 008 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 24, 'largest_prime': 23, 'fib_candidate': 14, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=10&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=29&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 008 | DIFF] picked=10 | next=mutate_step_prime | ~$.candidate: 23 -> 29 | ~$.largest_prime: 19 -> 23 | ~$.script: ["candidate = 19", "largest_prime = 2", "fib_candidate = 8", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 23", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 22 -> 25
+[DRV_PROC] [HOP 008 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 23, "to": 29}, "$.largest_prime": {"from": 19, "to": 23}, "$.script": {"from": ["candidate = 19", "largest_prime = 2", "fib_candidate = 8", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 23", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 22, "to": 25}}}
+[DRV_PROC] [HOP 009 | + 2.18s | rem= 7.82s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=29&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=29&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=13&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 009 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 009 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 13, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 29, "candidate": 31, "largest_fib": 10, "fib_candidate": 2, "script_version": 28, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 009 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 30, 'largest_prime': 29, 'fib_candidate': 14, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=11&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=31&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 009 | DIFF] picked=11 | next=mutate_step_prime | ~$.candidate: 29 -> 31 | ~$.largest_prime: 23 -> 29 | ~$.script: ["candidate = 23", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 29", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 25 -> 28
+[DRV_PROC] [HOP 009 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 29, "to": 31}, "$.largest_prime": {"from": 23, "to": 29}, "$.script": {"from": ["candidate = 23", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 29", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 25, "to": 28}}}
+[DRV_PROC] [HOP 010 | + 2.37s | rem= 7.63s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=31&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=31&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=13&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 010 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 010 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 13, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 31, "candidate": 37, "largest_fib": 11, "fib_candidate": 2, "script_version": 31, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 010 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 32, 'largest_prime': 31, 'fib_candidate': 14, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=12&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=37&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 010 | DIFF] picked=12 | next=mutate_step_prime | ~$.candidate: 31 -> 37 | ~$.largest_prime: 29 -> 31 | ~$.script: ["candidate = 29", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 31", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 28 -> 31
+[DRV_PROC] [HOP 010 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 31, "to": 37}, "$.largest_prime": {"from": 29, "to": 31}, "$.script": {"from": ["candidate = 29", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 31", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 28, "to": 31}}}
+[DRV_PROC] [HOP 011 | + 2.56s | rem= 7.44s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=37&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=37&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=13&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 011 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 011 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 13, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 37, "candidate": 41, "largest_fib": 12, "fib_candidate": 2, "script_version": 34, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 011 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 38, 'largest_prime': 37, 'fib_candidate': 14, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=14&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=41&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 011 | DIFF] picked=14 | next=mutate_step_prime | ~$.candidate: 37 -> 41 | ~$.largest_prime: 31 -> 37 | ~$.script: ["candidate = 31", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 37", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 31 -> 34
+[DRV_PROC] [HOP 011 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 37, "to": 41}, "$.largest_prime": {"from": 31, "to": 37}, "$.script": {"from": ["candidate = 31", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 37", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 31, "to": 34}}}
+[DRV_PROC] [HOP 012 | + 2.81s | rem= 7.19s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=41&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=41&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=21&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 012 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 012 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 21, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 41, "candidate": 43, "largest_fib": 14, "fib_candidate": 2, "script_version": 37, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 012 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 42, 'largest_prime': 41, 'fib_candidate': 22, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=15&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=43&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 012 | DIFF] picked=15 | next=mutate_step_prime | ~$.candidate: 41 -> 43 | ~$.largest_prime: 37 -> 41 | ~$.script: ["candidate = 37", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 41", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 34 -> 37
+[DRV_PROC] [HOP 012 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 41, "to": 43}, "$.largest_prime": {"from": 37, "to": 41}, "$.script": {"from": ["candidate = 37", "largest_prime = 2", "fib_candidate = 13", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 41", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 34, "to": 37}}}
+[DRV_PROC] [HOP 013 | + 3.02s | rem= 6.98s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=43&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=43&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=21&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 013 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 013 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 21, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 43, "candidate": 47, "largest_fib": 15, "fib_candidate": 2, "script_version": 40, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 013 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 44, 'largest_prime': 43, 'fib_candidate': 22, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=16&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=47&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 013 | DIFF] picked=16 | next=mutate_step_prime | ~$.candidate: 43 -> 47 | ~$.largest_prime: 41 -> 43 | ~$.script: ["candidate = 41", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 43", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 37 -> 40
+[DRV_PROC] [HOP 013 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 43, "to": 47}, "$.largest_prime": {"from": 41, "to": 43}, "$.script": {"from": ["candidate = 41", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 43", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 37, "to": 40}}}
+[DRV_PROC] [HOP 014 | + 3.23s | rem= 6.77s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=47&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=47&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=21&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 014 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 014 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 21, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 47, "candidate": 53, "largest_fib": 16, "fib_candidate": 2, "script_version": 43, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 014 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 48, 'largest_prime': 47, 'fib_candidate': 22, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=17&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=53&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 014 | DIFF] picked=17 | next=mutate_step_prime | ~$.candidate: 47 -> 53 | ~$.largest_prime: 43 -> 47 | ~$.script: ["candidate = 43", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 47", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 40 -> 43
+[DRV_PROC] [HOP 014 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 47, "to": 53}, "$.largest_prime": {"from": 43, "to": 47}, "$.script": {"from": ["candidate = 43", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 47", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 40, "to": 43}}}
+[DRV_PROC] [HOP 015 | + 3.40s | rem= 6.60s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=53&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=53&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=21&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 015 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 015 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 21, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 53, "candidate": 59, "largest_fib": 17, "fib_candidate": 2, "script_version": 46, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 015 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 54, 'largest_prime': 53, 'fib_candidate': 22, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=18&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=59&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 015 | DIFF] picked=18 | next=mutate_step_prime | ~$.candidate: 53 -> 59 | ~$.largest_prime: 47 -> 53 | ~$.script: ["candidate = 47", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 53", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 43 -> 46
+[DRV_PROC] [HOP 015 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 53, "to": 59}, "$.largest_prime": {"from": 47, "to": 53}, "$.script": {"from": ["candidate = 47", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 53", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 43, "to": 46}}}
+[DRV_PROC] [HOP 016 | + 3.60s | rem= 6.40s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=59&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=59&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=21&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 016 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 016 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 21, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 59, "candidate": 61, "largest_fib": 18, "fib_candidate": 2, "script_version": 49, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 016 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 60, 'largest_prime': 59, 'fib_candidate': 22, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=19&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=61&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 016 | DIFF] picked=19 | next=mutate_step_prime | ~$.candidate: 59 -> 61 | ~$.largest_prime: 53 -> 59 | ~$.script: ["candidate = 53", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 59", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 46 -> 49
+[DRV_PROC] [HOP 016 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 59, "to": 61}, "$.largest_prime": {"from": 53, "to": 59}, "$.script": {"from": ["candidate = 53", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 59", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 46, "to": 49}}}
+[DRV_PROC] [HOP 017 | + 3.77s | rem= 6.23s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=61&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=61&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=21&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 017 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 017 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 21, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 61, "candidate": 67, "largest_fib": 19, "fib_candidate": 2, "script_version": 52, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 017 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 62, 'largest_prime': 61, 'fib_candidate': 22, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=20&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=67&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 017 | DIFF] picked=20 | next=mutate_step_prime | ~$.candidate: 61 -> 67 | ~$.largest_prime: 59 -> 61 | ~$.script: ["candidate = 59", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 61", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 49 -> 52
+[DRV_PROC] [HOP 017 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 61, "to": 67}, "$.largest_prime": {"from": 59, "to": 61}, "$.script": {"from": ["candidate = 59", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 61", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 49, "to": 52}}}
+[DRV_PROC] [HOP 018 | + 3.97s | rem= 6.03s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=67&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=67&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=21&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 018 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 018 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 21, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 67, "candidate": 71, "largest_fib": 20, "fib_candidate": 2, "script_version": 55, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 018 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 68, 'largest_prime': 67, 'fib_candidate': 22, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=21&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=71&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 018 | DIFF] picked=21 | next=mutate_step_prime | ~$.candidate: 67 -> 71 | ~$.largest_prime: 61 -> 67 | ~$.script: ["candidate = 61", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 67", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 52 -> 55
+[DRV_PROC] [HOP 018 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 67, "to": 71}, "$.largest_prime": {"from": 61, "to": 67}, "$.script": {"from": ["candidate = 61", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 67", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 52, "to": 55}}}
+[DRV_PROC] [HOP 019 | + 4.14s | rem= 5.86s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=71&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=71&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 019 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 019 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 71, "candidate": 73, "largest_fib": 21, "fib_candidate": 2, "script_version": 58, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 019 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 72, 'largest_prime': 71, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=22&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=73&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 019 | DIFF] picked=22 | next=mutate_step_prime | ~$.candidate: 71 -> 73 | ~$.largest_prime: 67 -> 71 | ~$.script: ["candidate = 67", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 71", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 55 -> 58
+[DRV_PROC] [HOP 019 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 71, "to": 73}, "$.largest_prime": {"from": 67, "to": 71}, "$.script": {"from": ["candidate = 67", "largest_prime = 2", "fib_candidate = 21", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 71", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 55, "to": 58}}}
+[DRV_PROC] [HOP 020 | + 4.32s | rem= 5.68s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=73&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=73&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 020 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 020 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 73, "candidate": 79, "largest_fib": 22, "fib_candidate": 2, "script_version": 61, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 020 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 74, 'largest_prime': 73, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=23&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=79&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 020 | DIFF] picked=23 | next=mutate_step_prime | ~$.candidate: 73 -> 79 | ~$.largest_prime: 71 -> 73 | ~$.script: ["candidate = 71", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 73", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 58 -> 61
+[DRV_PROC] [HOP 020 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 73, "to": 79}, "$.largest_prime": {"from": 71, "to": 73}, "$.script": {"from": ["candidate = 71", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 73", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 58, "to": 61}}}
+[DRV_PROC] [HOP 021 | + 4.53s | rem= 5.47s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=79&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=79&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 021 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 021 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 79, "candidate": 83, "largest_fib": 23, "fib_candidate": 2, "script_version": 64, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 021 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 80, 'largest_prime': 79, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=24&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=83&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 021 | DIFF] picked=24 | next=mutate_step_prime | ~$.candidate: 79 -> 83 | ~$.largest_prime: 73 -> 79 | ~$.script: ["candidate = 73", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 79", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 61 -> 64
+[DRV_PROC] [HOP 021 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 79, "to": 83}, "$.largest_prime": {"from": 73, "to": 79}, "$.script": {"from": ["candidate = 73", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 79", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 61, "to": 64}}}
+[DRV_PROC] [HOP 022 | + 4.74s | rem= 5.26s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=83&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=83&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 022 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 022 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 83, "candidate": 89, "largest_fib": 24, "fib_candidate": 2, "script_version": 67, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 022 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 84, 'largest_prime': 83, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=25&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=89&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 022 | DIFF] picked=25 | next=mutate_step_prime | ~$.candidate: 83 -> 89 | ~$.largest_prime: 79 -> 83 | ~$.script: ["candidate = 79", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 83", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 64 -> 67
+[DRV_PROC] [HOP 022 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 83, "to": 89}, "$.largest_prime": {"from": 79, "to": 83}, "$.script": {"from": ["candidate = 79", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 83", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 64, "to": 67}}}
+[DRV_PROC] [HOP 023 | + 4.93s | rem= 5.07s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=89&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=89&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 023 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 023 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 89, "candidate": 97, "largest_fib": 25, "fib_candidate": 2, "script_version": 70, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 023 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 90, 'largest_prime': 89, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=26&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=97&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 023 | DIFF] picked=26 | next=mutate_step_prime | ~$.candidate: 89 -> 97 | ~$.largest_prime: 83 -> 89 | ~$.script: ["candidate = 83", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 89", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 67 -> 70
+[DRV_PROC] [HOP 023 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 89, "to": 97}, "$.largest_prime": {"from": 83, "to": 89}, "$.script": {"from": ["candidate = 83", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 89", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 67, "to": 70}}}
+[DRV_PROC] [HOP 024 | + 5.13s | rem= 4.87s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=97&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=97&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 024 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 024 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 97, "candidate": 101, "largest_fib": 26, "fib_candidate": 2, "script_version": 73, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 024 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 98, 'largest_prime': 97, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=27&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=101&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 024 | DIFF] picked=27 | next=mutate_step_prime | ~$.candidate: 97 -> 101 | ~$.largest_prime: 89 -> 97 | ~$.script: ["candidate = 89", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 97", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 70 -> 73
+[DRV_PROC] [HOP 024 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 97, "to": 101}, "$.largest_prime": {"from": 89, "to": 97}, "$.script": {"from": ["candidate = 89", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 97", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 70, "to": 73}}}
+[DRV_PROC] [HOP 025 | + 5.36s | rem= 4.64s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=101&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=101&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 025 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 025 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 101, "candidate": 103, "largest_fib": 27, "fib_candidate": 2, "script_version": 76, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 025 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 102, 'largest_prime': 101, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=28&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=103&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 025 | DIFF] picked=28 | next=mutate_step_prime | ~$.candidate: 101 -> 103 | ~$.largest_prime: 97 -> 101 | ~$.script: ["candidate = 97", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 101", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 73 -> 76
+[DRV_PROC] [HOP 025 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 101, "to": 103}, "$.largest_prime": {"from": 97, "to": 101}, "$.script": {"from": ["candidate = 97", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 101", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 73, "to": 76}}}
+[DRV_PROC] [HOP 026 | + 5.55s | rem= 4.45s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=103&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=103&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 026 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 026 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 103, "candidate": 107, "largest_fib": 28, "fib_candidate": 2, "script_version": 79, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 026 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 104, 'largest_prime': 103, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=29&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=107&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 026 | DIFF] picked=29 | next=mutate_step_prime | ~$.candidate: 103 -> 107 | ~$.largest_prime: 101 -> 103 | ~$.script: ["candidate = 101", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 103", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 76 -> 79
+[DRV_PROC] [HOP 026 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 103, "to": 107}, "$.largest_prime": {"from": 101, "to": 103}, "$.script": {"from": ["candidate = 101", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 103", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 76, "to": 79}}}
+[DRV_PROC] [HOP 027 | + 5.75s | rem= 4.25s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=107&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=107&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 027 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 027 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 107, "candidate": 109, "largest_fib": 29, "fib_candidate": 2, "script_version": 82, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 027 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 108, 'largest_prime': 107, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=30&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=109&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 027 | DIFF] picked=30 | next=mutate_step_prime | ~$.candidate: 107 -> 109 | ~$.largest_prime: 103 -> 107 | ~$.script: ["candidate = 103", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 107", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 79 -> 82
+[DRV_PROC] [HOP 027 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 107, "to": 109}, "$.largest_prime": {"from": 103, "to": 107}, "$.script": {"from": ["candidate = 103", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 107", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 79, "to": 82}}}
+[DRV_PROC] [HOP 028 | + 5.94s | rem= 4.06s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=109&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=109&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 028 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 028 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 109, "candidate": 113, "largest_fib": 30, "fib_candidate": 2, "script_version": 85, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 028 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 110, 'largest_prime': 109, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=31&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=113&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 028 | DIFF] picked=31 | next=mutate_step_prime | ~$.candidate: 109 -> 113 | ~$.largest_prime: 107 -> 109 | ~$.script: ["candidate = 107", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 109", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 82 -> 85
+[DRV_PROC] [HOP 028 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 109, "to": 113}, "$.largest_prime": {"from": 107, "to": 109}, "$.script": {"from": ["candidate = 107", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 109", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 82, "to": 85}}}
+[DRV_PROC] [HOP 029 | + 6.18s | rem= 3.82s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=113&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=113&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 029 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 029 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 113, "candidate": 127, "largest_fib": 31, "fib_candidate": 2, "script_version": 88, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 029 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 114, 'largest_prime': 113, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=32&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=127&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 029 | DIFF] picked=32 | next=mutate_step_prime | ~$.candidate: 113 -> 127 | ~$.largest_prime: 109 -> 113 | ~$.script: ["candidate = 109", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 113", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 85 -> 88
+[DRV_PROC] [HOP 029 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 113, "to": 127}, "$.largest_prime": {"from": 109, "to": 113}, "$.script": {"from": ["candidate = 109", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 113", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 85, "to": 88}}}
+[DRV_PROC] [HOP 030 | + 6.36s | rem= 3.64s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=127&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=127&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 030 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 030 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 127, "candidate": 131, "largest_fib": 32, "fib_candidate": 2, "script_version": 91, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 030 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 128, 'largest_prime': 127, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=33&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=131&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 030 | DIFF] picked=33 | next=mutate_step_prime | ~$.candidate: 127 -> 131 | ~$.largest_prime: 113 -> 127 | ~$.script: ["candidate = 113", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 127", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 88 -> 91
+[DRV_PROC] [HOP 030 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 127, "to": 131}, "$.largest_prime": {"from": 113, "to": 127}, "$.script": {"from": ["candidate = 113", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 127", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 88, "to": 91}}}
+[DRV_PROC] [HOP 031 | + 6.55s | rem= 3.45s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=131&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=131&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=34&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 031 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 031 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 34, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 131, "candidate": 137, "largest_fib": 33, "fib_candidate": 2, "script_version": 94, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 031 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 132, 'largest_prime': 131, 'fib_candidate': 35, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=34&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=137&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 031 | DIFF] picked=34 | next=mutate_step_prime | ~$.candidate: 131 -> 137 | ~$.largest_prime: 127 -> 131 | ~$.script: ["candidate = 127", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 131", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 91 -> 94
+[DRV_PROC] [HOP 031 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 131, "to": 137}, "$.largest_prime": {"from": 127, "to": 131}, "$.script": {"from": ["candidate = 127", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 131", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 91, "to": 94}}}
+[DRV_PROC] [HOP 032 | + 6.72s | rem= 3.28s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=137&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=137&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 032 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 032 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 137, "candidate": 139, "largest_fib": 34, "fib_candidate": 2, "script_version": 97, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 032 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 138, 'largest_prime': 137, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=35&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=139&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 032 | DIFF] picked=35 | next=mutate_step_prime | ~$.candidate: 137 -> 139 | ~$.largest_prime: 131 -> 137 | ~$.script: ["candidate = 131", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 137", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 94 -> 97
+[DRV_PROC] [HOP 032 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 137, "to": 139}, "$.largest_prime": {"from": 131, "to": 137}, "$.script": {"from": ["candidate = 131", "largest_prime = 2", "fib_candidate = 34", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 137", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 94, "to": 97}}}
+[DRV_PROC] [HOP 033 | + 6.92s | rem= 3.08s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=139&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=139&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 033 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 033 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 139, "candidate": 149, "largest_fib": 35, "fib_candidate": 2, "script_version": 100, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 033 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 140, 'largest_prime': 139, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=36&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=149&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 033 | DIFF] picked=36 | next=mutate_step_prime | ~$.candidate: 139 -> 149 | ~$.largest_prime: 137 -> 139 | ~$.script: ["candidate = 137", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 139", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 97 -> 100
+[DRV_PROC] [HOP 033 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 139, "to": 149}, "$.largest_prime": {"from": 137, "to": 139}, "$.script": {"from": ["candidate = 137", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 139", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 97, "to": 100}}}
+[DRV_PROC] [HOP 034 | + 7.11s | rem= 2.89s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=149&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=149&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 034 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 034 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 149, "candidate": 151, "largest_fib": 36, "fib_candidate": 2, "script_version": 103, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 034 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 150, 'largest_prime': 149, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=37&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=151&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 034 | DIFF] picked=37 | next=mutate_step_prime | ~$.candidate: 149 -> 151 | ~$.largest_prime: 139 -> 149 | ~$.script: ["candidate = 139", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 149", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 100 -> 103
+[DRV_PROC] [HOP 034 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 149, "to": 151}, "$.largest_prime": {"from": 139, "to": 149}, "$.script": {"from": ["candidate = 139", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 149", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 100, "to": 103}}}
+[DRV_PROC] [HOP 035 | + 7.28s | rem= 2.72s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=151&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=151&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 035 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 035 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 151, "candidate": 157, "largest_fib": 37, "fib_candidate": 2, "script_version": 106, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 035 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 152, 'largest_prime': 151, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=38&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=157&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 035 | DIFF] picked=38 | next=mutate_step_prime | ~$.candidate: 151 -> 157 | ~$.largest_prime: 149 -> 151 | ~$.script: ["candidate = 149", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 151", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 103 -> 106
+[DRV_PROC] [HOP 035 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 151, "to": 157}, "$.largest_prime": {"from": 149, "to": 151}, "$.script": {"from": ["candidate = 149", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 151", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 103, "to": 106}}}
+[DRV_PROC] [HOP 036 | + 7.47s | rem= 2.53s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=157&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=157&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 036 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 036 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 157, "candidate": 163, "largest_fib": 38, "fib_candidate": 2, "script_version": 109, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 036 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 158, 'largest_prime': 157, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=39&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=163&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 036 | DIFF] picked=39 | next=mutate_step_prime | ~$.candidate: 157 -> 163 | ~$.largest_prime: 151 -> 157 | ~$.script: ["candidate = 151", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 157", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 106 -> 109
+[DRV_PROC] [HOP 036 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 157, "to": 163}, "$.largest_prime": {"from": 151, "to": 157}, "$.script": {"from": ["candidate = 151", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 157", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 106, "to": 109}}}
+[DRV_PROC] [HOP 037 | + 7.66s | rem= 2.34s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=163&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=163&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 037 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 037 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 163, "candidate": 167, "largest_fib": 39, "fib_candidate": 2, "script_version": 112, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 037 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 164, 'largest_prime': 163, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=40&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=167&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 037 | DIFF] picked=40 | next=mutate_step_prime | ~$.candidate: 163 -> 167 | ~$.largest_prime: 157 -> 163 | ~$.script: ["candidate = 157", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 163", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 109 -> 112
+[DRV_PROC] [HOP 037 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 163, "to": 167}, "$.largest_prime": {"from": 157, "to": 163}, "$.script": {"from": ["candidate = 157", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 163", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 109, "to": 112}}}
+[DRV_PROC] [HOP 038 | + 7.84s | rem= 2.16s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=167&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=167&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 038 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 038 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 167, "candidate": 173, "largest_fib": 40, "fib_candidate": 2, "script_version": 115, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 038 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 168, 'largest_prime': 167, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=41&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=173&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 038 | DIFF] picked=41 | next=mutate_step_prime | ~$.candidate: 167 -> 173 | ~$.largest_prime: 163 -> 167 | ~$.script: ["candidate = 163", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 167", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 112 -> 115
+[DRV_PROC] [HOP 038 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 167, "to": 173}, "$.largest_prime": {"from": 163, "to": 167}, "$.script": {"from": ["candidate = 163", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 167", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 112, "to": 115}}}
+[DRV_PROC] [HOP 039 | + 8.05s | rem= 1.95s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=173&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=173&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 039 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 039 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 173, "candidate": 179, "largest_fib": 41, "fib_candidate": 2, "script_version": 118, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 039 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 174, 'largest_prime': 173, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=42&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=179&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 039 | DIFF] picked=42 | next=mutate_step_prime | ~$.candidate: 173 -> 179 | ~$.largest_prime: 167 -> 173 | ~$.script: ["candidate = 167", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 173", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 115 -> 118
+[DRV_PROC] [HOP 039 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 173, "to": 179}, "$.largest_prime": {"from": 167, "to": 173}, "$.script": {"from": ["candidate = 167", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 173", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 115, "to": 118}}}
+[DRV_PROC] [HOP 040 | + 8.22s | rem= 1.78s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=179&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=179&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 040 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 040 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 179, "candidate": 181, "largest_fib": 42, "fib_candidate": 2, "script_version": 121, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 040 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 180, 'largest_prime': 179, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=43&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=181&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 040 | DIFF] picked=43 | next=mutate_step_prime | ~$.candidate: 179 -> 181 | ~$.largest_prime: 173 -> 179 | ~$.script: ["candidate = 173", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 179", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 118 -> 121
+[DRV_PROC] [HOP 040 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 179, "to": 181}, "$.largest_prime": {"from": 173, "to": 179}, "$.script": {"from": ["candidate = 173", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 179", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 118, "to": 121}}}
+[DRV_PROC] [HOP 041 | + 8.43s | rem= 1.57s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=181&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=181&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 041 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 041 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 181, "candidate": 191, "largest_fib": 43, "fib_candidate": 2, "script_version": 124, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 041 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 182, 'largest_prime': 181, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=44&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=191&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 041 | DIFF] picked=44 | next=mutate_step_prime | ~$.candidate: 181 -> 191 | ~$.largest_prime: 179 -> 181 | ~$.script: ["candidate = 179", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 181", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 121 -> 124
+[DRV_PROC] [HOP 041 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 181, "to": 191}, "$.largest_prime": {"from": 179, "to": 181}, "$.script": {"from": ["candidate = 179", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 181", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 121, "to": 124}}}
+[DRV_PROC] [HOP 042 | + 8.62s | rem= 1.38s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=191&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=191&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 042 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 042 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 191, "candidate": 193, "largest_fib": 44, "fib_candidate": 2, "script_version": 127, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 042 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 192, 'largest_prime': 191, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=45&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=193&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 042 | DIFF] picked=45 | next=mutate_step_prime | ~$.candidate: 191 -> 193 | ~$.largest_prime: 181 -> 191 | ~$.script: ["candidate = 181", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 191", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 124 -> 127
+[DRV_PROC] [HOP 042 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 191, "to": 193}, "$.largest_prime": {"from": 181, "to": 191}, "$.script": {"from": ["candidate = 181", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 191", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 124, "to": 127}}}
+[DRV_PROC] [HOP 043 | + 8.81s | rem= 1.19s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=193&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=193&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 043 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 043 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 193, "candidate": 197, "largest_fib": 45, "fib_candidate": 2, "script_version": 130, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 043 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 194, 'largest_prime': 193, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=46&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=197&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 043 | DIFF] picked=46 | next=mutate_step_prime | ~$.candidate: 193 -> 197 | ~$.largest_prime: 191 -> 193 | ~$.script: ["candidate = 191", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 193", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 127 -> 130
+[DRV_PROC] [HOP 043 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 193, "to": 197}, "$.largest_prime": {"from": 191, "to": 193}, "$.script": {"from": ["candidate = 191", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 193", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 127, "to": 130}}}
+[DRV_PROC] [HOP 044 | + 9.10s | rem= 0.90s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=197&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=197&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 044 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 044 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 197, "candidate": 199, "largest_fib": 46, "fib_candidate": 2, "script_version": 133, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 044 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 198, 'largest_prime': 197, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=47&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=199&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 044 | DIFF] picked=47 | next=mutate_step_prime | ~$.candidate: 197 -> 199 | ~$.largest_prime: 193 -> 197 | ~$.script: ["candidate = 193", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 197", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 130 -> 133
+[DRV_PROC] [HOP 044 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 197, "to": 199}, "$.largest_prime": {"from": 193, "to": 197}, "$.script": {"from": ["candidate = 193", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 197", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 130, "to": 133}}}
+[DRV_PROC] [HOP 045 | + 9.29s | rem= 0.71s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=199&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=199&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 045 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 045 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 199, "candidate": 211, "largest_fib": 47, "fib_candidate": 2, "script_version": 136, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 045 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 200, 'largest_prime': 199, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=48&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=211&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 045 | DIFF] picked=48 | next=mutate_step_prime | ~$.candidate: 199 -> 211 | ~$.largest_prime: 197 -> 199 | ~$.script: ["candidate = 197", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 199", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 133 -> 136
+[DRV_PROC] [HOP 045 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 199, "to": 211}, "$.largest_prime": {"from": 197, "to": 199}, "$.script": {"from": ["candidate = 197", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 199", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 133, "to": 136}}}
+[DRV_PROC] [HOP 046 | + 9.48s | rem= 0.52s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=211&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=211&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 046 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 046 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 211, "candidate": 223, "largest_fib": 48, "fib_candidate": 2, "script_version": 139, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 046 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 212, 'largest_prime': 211, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=49&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=223&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 046 | DIFF] picked=49 | next=mutate_step_prime | ~$.candidate: 211 -> 223 | ~$.largest_prime: 199 -> 211 | ~$.script: ["candidate = 199", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 211", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 136 -> 139
+[DRV_PROC] [HOP 046 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 211, "to": 223}, "$.largest_prime": {"from": 199, "to": 211}, "$.script": {"from": ["candidate = 199", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 211", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 136, "to": 139}}}
+[DRV_PROC] [HOP 047 | + 9.70s | rem= 0.30s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=223&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=223&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 047 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 047 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 223, "candidate": 227, "largest_fib": 49, "fib_candidate": 2, "script_version": 142, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 047 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 224, 'largest_prime': 223, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=50&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=227&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 047 | DIFF] picked=50 | next=mutate_step_prime | ~$.candidate: 223 -> 227 | ~$.largest_prime: 211 -> 223 | ~$.script: ["candidate = 211", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 223", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 139 -> 142
+[DRV_PROC] [HOP 047 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 223, "to": 227}, "$.largest_prime": {"from": 211, "to": 223}, "$.script": {"from": ["candidate = 211", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 223", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 139, "to": 142}}}
+[DRV_PROC] [HOP 048 | + 9.90s | rem= 0.10s] Instruction [mutate_step_prime] POST http://127.0.0.1:8002/act?mode=step-prime&val=227&reader=inspect
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /act?mode=step-prime&val=227&reader=inspect HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=step-prime HTTP/1.1" 200 -
+[DRV_PROC] [HOP 048 | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> end_next=mutate_step_fib
+[MUT_PROC] [MUTATE  :8002] "GET /ast?action=pipe&name=next_fib_after&args=%5B1%5D&pipe_mode=json_stream&reader=mutate HTTP/1.1" 200 -
+[DRV_PROC] [HOP 048 | PIPE] {"fn": "next_fib_after", "args": [1], "kwargs": {}, "result": 2, "compiled_from_ast": true, "mutated_fields": {"fib_candidate": {"from": 55, "to": 2}}, "returned_state_updates": {}, "state": {"largest_prime": 227, "candidate": 229, "largest_fib": 50, "fib_candidate": 2, "script_version": 145, "last_mode": "fn:next_fib_after", "last_actor": "mutate"}}
+[MUT_PROC] [MUTATE  :8002] "POST /script/exec?reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:exec HTTP/1.1" 200 -
+[DRV_PROC] [HOP 048 | EXEC] http://127.0.0.1:8002/script/exec -> exec_ok=True updated_vars={'candidate': 228, 'largest_prime': 227, 'fib_candidate': 56, 'largest_fib': 1}
+[MUT_PROC] [MUTATE  :8002] "GET /options?prop=largest_fib HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /set?prop=largest_fib&val=51&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=229&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=set:largest_fib HTTP/1.1" 200 -
+[DRV_PROC] [HOP 048 | DIFF] picked=51 | next=mutate_step_prime | ~$.candidate: 227 -> 229 | ~$.largest_prime: 223 -> 227 | ~$.script: ["candidate = 223", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] -> ["candidate = 227", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"] | ~$.script_version: 142 -> 145
+[DRV_PROC] [HOP 048 | JSON] {"added": {}, "removed": {}, "changed": {"$.candidate": {"from": 227, "to": 229}, "$.largest_prime": {"from": 223, "to": 227}, "$.script": {"from": ["candidate = 223", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"], "to": ["candidate = 227", "largest_prime = 2", "fib_candidate = 55", "largest_fib = 1", "if candidate % 2 != 0:", "    largest_prime = candidate", "candidate = candidate + 1", "fib_candidate = fib_candidate + 1"]}, "$.script_version": {"from": 142, "to": 145}}}
+[DRV_PROC] [LOOP] Timeout reached (timeout after 10.00s); stopping loop.
+[DRV_PROC]
+[DRV_PROC] [SUMMARY] Hops=48 | DiffEvents=49 | Elapsed=10.00s | Stop=timeout after 10.00s
+[MUT_PROC] [MUTATE  :8002] "POST /script/reset HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=55&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=script:reset HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /script/reset HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=229&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /callback?from=inspect&trigger=script:reset HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /reset HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=fib_candidate&val=2&reader=inspect HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /callback?from=mutate&trigger=reset HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "POST /reset HTTP/1.1" 200 -
+[INSP_PROC] [INSPECT :8001] "GET /peer HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /script/mutate?op=set_var&var=candidate&val=3&reader=mutate HTTP/1.1" 200 -
+[MUT_PROC] [MUTATE  :8002] "POST /callback?from=inspect&trigger=reset HTTP/1.1" 200 -
+[DRV_PROC] [RESET] http://127.0.0.1:8002/reset -> True | http://127.0.0.1:8001/reset -> True
+[RUNNER] Stopped mutate_server (pid=23472)
+[RUNNER] Stopped inspect_server (pid=18628)```
