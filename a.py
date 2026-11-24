@@ -1,15 +1,71 @@
 import ast
 import copy
+import inspect
 import json
-import math
 import os
+import subprocess
+import sys
+import threading
+import time
+from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, urlparse
 from urllib.request import Request, urlopen
 
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
+
 INSPECT_HOST = "http://127.0.0.1:8001"
 MUTATE_HOST = "http://127.0.0.1:8002"
 STATE_FILE = "inspect_state.json"
+LOCK_FILE = "hateoas_io.lock"
+
+_THREAD_LOG_LOCK = threading.Lock()
+
+
+@contextmanager
+def shared_line_lock(lock_path: str = LOCK_FILE, timeout: float = 5.0):
+    os.makedirs(os.path.dirname(os.path.abspath(lock_path)) or ".", exist_ok=True)
+    with _THREAD_LOG_LOCK:
+        f = open(lock_path, "a+", encoding="utf-8")
+        deadline = time.monotonic() + timeout
+        acquired = False
+        try:
+            while True:
+                try:
+                    if os.name == "nt":
+                        f.seek(0)
+                        msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+                    else:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    acquired = True
+                    break
+                except OSError:
+                    if time.monotonic() >= deadline:
+                        break
+                    time.sleep(0.01)
+            yield
+        finally:
+            if acquired:
+                try:
+                    if os.name == "nt":
+                        f.seek(0)
+                        msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
+                    else:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                except OSError:
+                    pass
+            f.close()
+
+
+def stream_log(msg: str, lock_path: str = LOCK_FILE) -> None:
+    for line in str(msg).splitlines() or [""]:
+        with shared_line_lock(lock_path=lock_path):
+            sys.stdout.write(f"{line}\n")
+            sys.stdout.flush()
+
 
 DEFAULT_SCRIPT = [
     "candidate = 3",
@@ -30,9 +86,82 @@ SAFE_BUILTINS = {
     "range": range,
     "int": int,
     "bool": bool,
+    "dict": dict,
+    "list": list,
+    "str": str,
+    "isinstance": isinstance,
     "True": True,
     "False": False,
 }
+
+DEFAULT_AST_SOURCES: dict[str, str] = {
+    "is_prime": """
+def is_prime(n=None):
+    target = STATE["candidate"] if n is None else int(n)
+    if target < 2:
+        return False
+    if target in (2, 3):
+        return True
+    if target % 2 == 0 or target % 3 == 0:
+        return False
+    d = 5
+    while d * d <= target:
+        if target % d == 0 or target % (d + 2) == 0:
+            return False
+        d += 6
+    return True
+""".strip(),
+    "next_prime_after": """
+def next_prime_after(n=None):
+    base = STATE["largest_prime"] if n is None else int(n)
+    cur = 2 if base + 1 < 2 else base + 1
+    while not is_prime(cur):
+        cur += 1
+    set_state("candidate", cur)
+    return cur
+""".strip(),
+    "is_fibonacci": """
+def is_fibonacci(n=None):
+    target = STATE["fib_candidate"] if n is None else int(n)
+    if target < 0:
+        return False
+    if target in (0, 1):
+        return True
+    a, b = 0, 1
+    while b < target:
+        a, b = b, a + b
+    return b == target
+""".strip(),
+    "next_fib_after": """
+def next_fib_after(n=None):
+    base = STATE["largest_fib"] if n is None else int(n)
+    cur = 1 if base + 1 < 1 else base + 1
+    while not is_fibonacci(cur):
+        cur += 1
+    set_state("fib_candidate", cur)
+    return cur
+""".strip(),
+}
+
+
+def build_ast_entry(name: str, source: str, kind: str = "dynamic") -> dict:
+    tree = ast.parse(source)
+    fn_names = [node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
+    return {
+        "name": name,
+        "kind": kind,
+        "source": source,
+        "ast_dump": ast.dump(tree),
+        "functions": fn_names,
+        "version": 1,
+    }
+
+
+def default_ast_list() -> list[dict]:
+    return [
+        build_ast_entry(k, v, kind="prime" if "prime" in k else "fib")
+        for k, v in DEFAULT_AST_SOURCES.items()
+    ]
 
 
 def default_state() -> dict:
@@ -45,6 +174,7 @@ def default_state() -> dict:
         "document": {"count": "3"},
         "script": list(DEFAULT_SCRIPT),
         "script_version": 1,
+        "ast_functions": default_ast_list(),
         "last_mode": "init",
         "last_actor": "inspect",
         "reading_peer": False,
@@ -53,48 +183,380 @@ def default_state() -> dict:
 
 
 STATE = default_state()
+_COMPILED_CACHE: dict[tuple[str, int], object] = {}
+
+
+def set_state_value(key: str, value) -> None:
+    STATE[key] = value
+    if key == "script" and isinstance(value, list):
+        STATE["script_version"] = STATE.get("script_version", 1) + 1
+
+
+def apply_returned_state_updates(result, actor: str = "inspect") -> dict:
+    applied: dict = {}
+    state_keys = {
+        "largest_prime",
+        "candidate",
+        "largest_fib",
+        "fib_candidate",
+        "schema",
+        "document",
+        "script",
+        "script_version",
+        "ast_functions",
+        "last_mode",
+        "last_actor",
+    }
+    if isinstance(result, dict):
+        nested = result.get("state_updates") or result.get("updates")
+        if isinstance(nested, dict):
+            for k, v in nested.items():
+                set_state_value(k, v)
+                applied[k] = v
+        for k, v in result.items():
+            if k in state_keys:
+                set_state_value(k, v)
+                applied[k] = v
+    if applied:
+        STATE["last_actor"] = actor
+    return applied
+
+
+def compile_ast_namespace(ast_entries: list[dict], extra_globals: dict | None = None) -> dict:
+    ns: dict = {
+        "__builtins__": SAFE_BUILTINS,
+        "STATE": STATE,
+        "set_state": set_state_value,
+    }
+    if extra_globals:
+        ns.update(extra_globals)
+
+    for entry in ast_entries:
+        name = entry.get("name", "anon")
+        ver = int(entry.get("version", 1))
+        src = entry.get("source", "pass")
+        cache_key = (name, ver)
+        code_obj = _COMPILED_CACHE.get(cache_key)
+        if code_obj is None:
+            tree = ast.parse(src, filename=f"<ast:{name}:v{ver}>")
+            ast.fix_missing_locations(tree)
+            code_obj = compile(tree, filename=f"<ast:{name}:v{ver}>", mode="exec")
+            _COMPILED_CACHE[cache_key] = code_obj
+        exec(code_obj, ns, ns)
+    return ns
+
+
+def discover_ast_functions(ast_entries: list[dict] | None = None) -> dict[str, dict]:
+    entries = ast_entries if ast_entries is not None else STATE["ast_functions"]
+    discovered: dict[str, dict] = {}
+    for entry in entries:
+        entry_name = entry.get("name", "anon")
+        entry_ver = int(entry.get("version", 1))
+        src = entry.get("source", "")
+        try:
+            tree = ast.parse(src)
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                params = [a.arg for a in node.args.args if a.arg != "self"]
+                discovered[node.name] = {
+                    "fn_name": node.name,
+                    "entry_name": entry_name,
+                    "version": entry_ver,
+                    "params": params,
+                    "endpoint": f"/fn/{node.name}",
+                }
+    return discovered
+
+
+def _coerce_arg(raw: str):
+    low = raw.strip().lower()
+    if low == "true":
+        return True
+    if low == "false":
+        return False
+    if low in ("null", "none"):
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        pass
+    try:
+        return float(raw)
+    except ValueError:
+        pass
+    try:
+        return json.loads(raw)
+    except Exception:
+        return raw
+
+
+def invoke_ast_function(
+    fn_name: str,
+    args: list | None = None,
+    kwargs: dict | None = None,
+    actor: str = "inspect",
+    ast_entries: list[dict] | None = None,
+) -> dict:
+    entries = ast_entries if ast_entries is not None else STATE["ast_functions"]
+    ns = compile_ast_namespace(entries)
+    target = ns.get(fn_name)
+    if not callable(target):
+        raise KeyError(f"AST function '{fn_name}' not found or not callable")
+
+    call_args = list(args or [])
+    call_kwargs = dict(kwargs or {})
+
+    if not call_args and not call_kwargs:
+        sig = inspect.signature(target)
+        for param in sig.parameters.values():
+            if param.default is inspect.Parameter.empty:
+                if param.name in ("n", "x", "val", "candidate"):
+                    call_args.append(STATE["fib_candidate"] if "fib" in fn_name else STATE["candidate"])
+                else:
+                    call_args.append(STATE["largest_fib"] if "fib" in fn_name else STATE["largest_prime"])
+
+    before_snap = copy.deepcopy(STATE)
+    result = target(*call_args, **call_kwargs)
+    applied_from_return = apply_returned_state_updates(result, actor=actor)
+    STATE["last_mode"] = f"fn:{fn_name}"
+    STATE["last_actor"] = actor
+
+    mutated_fields = {}
+    for k in ("largest_prime", "candidate", "largest_fib", "fib_candidate", "script", "script_version", "last_mode"):
+        if before_snap.get(k) != STATE.get(k):
+            mutated_fields[k] = {"from": before_snap.get(k), "to": STATE.get(k)}
+
+    return {
+        "fn": fn_name,
+        "args": call_args,
+        "kwargs": call_kwargs,
+        "result": result,
+        "compiled_from_ast": True,
+        "mutated_fields": mutated_fields,
+        "returned_state_updates": applied_from_return,
+        "state": {
+            "largest_prime": STATE["largest_prime"],
+            "candidate": STATE["candidate"],
+            "largest_fib": STATE["largest_fib"],
+            "fib_candidate": STATE["fib_candidate"],
+            "script_version": STATE["script_version"],
+            "last_mode": STATE["last_mode"],
+            "last_actor": STATE["last_actor"],
+        },
+    }
+
+
+def pipe_ast_results(
+    fn_name: str,
+    args: list | None = None,
+    pipe_cmd: str | None = None,
+    actor: str = "inspect",
+) -> dict:
+    eval_res = invoke_ast_function(fn_name, args=args, actor=actor)
+    payload_line = json.dumps(eval_res)
+    piped_output = payload_line
+    pipe_mode = "json_stream"
+
+    if pipe_cmd == "upper":
+        piped_output = payload_line.upper()
+        pipe_mode = "transform:upper"
+    elif pipe_cmd == "echo_pipe":
+        proc = subprocess.run(
+            [sys.executable, "-c", "import sys; print(sys.stdin.read().strip())"],
+            input=payload_line + "\n",
+            text=True,
+            capture_output=True,
+            timeout=3.0,
+        )
+        piped_output = proc.stdout.strip()
+        pipe_mode = "subprocess:stdin_pipe"
+
+    return {
+        "pipe_mode": pipe_mode,
+        "eval": eval_res,
+        "piped_line": piped_output,
+    }
 
 
 def is_prime(n: int) -> bool:
-    if not isinstance(n, int) or isinstance(n, bool) or n < 2:
-        return False
-    if n in (2, 3):
-        return True
-    if n % 2 == 0 or n % 3 == 0:
-        return False
-    limit = math.isqrt(n)
-    d = 5
-    while d <= limit:
-        if n % d == 0 or n % (d + 2) == 0:
-            return False
-        d += 6
-    return True
+    return bool(invoke_ast_function("is_prime", [n])["result"])
 
 
 def next_prime_after(n: int) -> int:
-    cur = max(2, int(n) + 1)
-    while not is_prime(cur):
-        cur += 1
-    return cur
+    return int(invoke_ast_function("next_prime_after", [n])["result"])
 
 
 def is_fibonacci(n: int) -> bool:
-    if not isinstance(n, int) or isinstance(n, bool) or n < 0:
-        return False
-    if n in (0, 1):
-        return True
-    for term in (5 * n * n + 4, 5 * n * n - 4):
-        root = math.isqrt(term)
-        if root * root == term:
-            return True
-    return False
+    return bool(invoke_ast_function("is_fibonacci", [n])["result"])
 
 
 def next_fib_after(n: int) -> int:
-    cur = max(1, int(n) + 1)
-    while not is_fibonacci(cur):
-        cur += 1
-    return cur
+    return int(invoke_ast_function("next_fib_after", [n])["result"])
+
+
+def ast_crud(
+    op: str,
+    name: str | None = None,
+    source: str | None = None,
+    args_raw: str | None = None,
+    pipe_mode: str | None = None,
+    actor: str = "inspect",
+) -> dict:
+    entries = STATE["ast_functions"]
+    op = (op or "list").lower()
+
+    if op == "list":
+        return {
+            "crud_op": "list",
+            "count": len(entries),
+            "discovered_functions": list(discover_ast_functions(entries).values()),
+            "ast_functions": [
+                {
+                    "name": e["name"],
+                    "kind": e.get("kind", "dynamic"),
+                    "version": e.get("version", 1),
+                    "functions": e.get("functions", []),
+                    "source": e["source"],
+                }
+                for e in entries
+            ],
+        }
+
+    if op == "get":
+        for e in entries:
+            if e["name"] == name:
+                return {"crud_op": "get", "entry": copy.deepcopy(e)}
+        return {"crud_op": "get", "error": f"AST entry '{name}' not found"}
+
+    if op in ("create", "update", "upsert"):
+        if not name or not source:
+            return {"crud_op": op, "error": "Provide 'name' and 'source'"}
+        new_entry = build_ast_entry(name, source)
+        existing_idx = next((i for i, e in enumerate(entries) if e["name"] == name), None)
+        if existing_idx is not None:
+            prev_ver = int(entries[existing_idx].get("version", 1))
+            new_entry["version"] = prev_ver + 1
+            entries[existing_idx] = new_entry
+            action_taken = "updated"
+        else:
+            entries.append(new_entry)
+            action_taken = "created"
+        STATE["last_mode"] = f"ast:{action_taken}:{name}"
+        STATE["last_actor"] = actor
+        return {
+            "crud_op": action_taken,
+            "entry": copy.deepcopy(new_entry),
+            "discovered_functions": list(discover_ast_functions(entries).values()),
+        }
+
+    if op == "delete":
+        before_len = len(entries)
+        STATE["ast_functions"] = [e for e in entries if e["name"] != name]
+        deleted = len(STATE["ast_functions"]) < before_len
+        if deleted:
+            STATE["last_mode"] = f"ast:deleted:{name}"
+            STATE["last_actor"] = actor
+        return {"crud_op": "delete", "name": name, "deleted": deleted, "remaining": len(STATE["ast_functions"])}
+
+    if op == "eval":
+        parsed_args = json.loads(args_raw) if args_raw else []
+        if not isinstance(parsed_args, list):
+            parsed_args = [parsed_args]
+        return {"crud_op": "eval", **invoke_ast_function(name or "is_prime", parsed_args, actor=actor)}
+
+    if op == "pipe":
+        parsed_args = json.loads(args_raw) if args_raw else []
+        if not isinstance(parsed_args, list):
+            parsed_args = [parsed_args]
+        return {"crud_op": "pipe", **pipe_ast_results(name or "next_fib_after", parsed_args, pipe_mode, actor=actor)}
+
+    return {"crud_op": op, "error": f"Unsupported AST CRUD op '{op}'"}
+
+
+def named_list_crud(
+    collection: str,
+    op: str,
+    item_name: str | None = None,
+    value_raw: str | None = None,
+    actor: str = "inspect",
+) -> dict:
+    op = (op or "list").lower()
+    col = collection or "script"
+
+    if col == "ast_functions":
+        return ast_crud(op=op, name=item_name, source=value_raw, actor=actor)
+
+    target_obj = STATE.get(col)
+    if isinstance(target_obj, list):
+        named_items = []
+        for idx, val in enumerate(target_obj):
+            entry_id = val.get("name") if isinstance(val, dict) and "name" in val else f"item_{idx}"
+            named_items.append({"name": entry_id, "index": idx, "value": copy.deepcopy(val)})
+
+        if op == "list":
+            return {"collection": col, "kind": "list", "crud_op": "list", "count": len(named_items), "items": named_items}
+
+        if op == "get":
+            for it in named_items:
+                if it["name"] == item_name or str(it["index"]) == str(item_name):
+                    return {"collection": col, "crud_op": "get", "item": it}
+            return {"collection": col, "crud_op": "get", "error": f"Item '{item_name}' not found in '{col}'"}
+
+        parsed_val = _coerce_arg(value_raw) if value_raw is not None else None
+        if op in ("create", "append"):
+            target_obj.append(parsed_val)
+            if col == "script":
+                STATE["script_version"] = STATE.get("script_version", 1) + 1
+            STATE["last_mode"] = f"list:create:{col}"
+            STATE["last_actor"] = actor
+            return {"collection": col, "crud_op": "create", "name": f"item_{len(target_obj)-1}", "value": parsed_val, "count": len(target_obj)}
+
+        if op in ("update", "set", "replace"):
+            for idx, val in enumerate(target_obj):
+                entry_id = val.get("name") if isinstance(val, dict) and "name" in val else f"item_{idx}"
+                if entry_id == item_name or str(idx) == str(item_name):
+                    target_obj[idx] = parsed_val
+                    if col == "script":
+                        STATE["script_version"] = STATE.get("script_version", 1) + 1
+                    STATE["last_mode"] = f"list:update:{col}:{entry_id}"
+                    STATE["last_actor"] = actor
+                    return {"collection": col, "crud_op": "update", "name": entry_id, "index": idx, "value": parsed_val}
+            return {"collection": col, "crud_op": "update", "error": f"Item '{item_name}' not found in '{col}'"}
+
+        if op == "delete":
+            for idx, val in enumerate(target_obj):
+                entry_id = val.get("name") if isinstance(val, dict) and "name" in val else f"item_{idx}"
+                if entry_id == item_name or str(idx) == str(item_name):
+                    removed = target_obj.pop(idx)
+                    if col == "script":
+                        STATE["script_version"] = STATE.get("script_version", 1) + 1
+                    STATE["last_mode"] = f"list:delete:{col}:{entry_id}"
+                    STATE["last_actor"] = actor
+                    return {"collection": col, "crud_op": "delete", "name": entry_id, "index": idx, "removed": removed, "count": len(target_obj)}
+            return {"collection": col, "crud_op": "delete", "error": f"Item '{item_name}' not found in '{col}'"}
+
+    if isinstance(target_obj, dict):
+        if op == "list":
+            return {"collection": col, "kind": "dict", "crud_op": "list", "items": [{"name": k, "value": copy.deepcopy(v)} for k, v in target_obj.items()]}
+        if op == "get":
+            if item_name in target_obj:
+                return {"collection": col, "crud_op": "get", "item": {"name": item_name, "value": copy.deepcopy(target_obj[item_name])}}
+            return {"collection": col, "crud_op": "get", "error": f"Key '{item_name}' not found in '{col}'"}
+        if op in ("create", "update", "set", "upsert") and item_name is not None:
+            parsed_val = _coerce_arg(value_raw) if value_raw is not None else None
+            target_obj[item_name] = parsed_val
+            STATE["last_mode"] = f"dict:upsert:{col}:{item_name}"
+            STATE["last_actor"] = actor
+            return {"collection": col, "crud_op": "upsert", "name": item_name, "value": parsed_val}
+        if op == "delete" and item_name in target_obj:
+            removed = target_obj.pop(item_name)
+            STATE["last_mode"] = f"dict:delete:{col}:{item_name}"
+            STATE["last_actor"] = actor
+            return {"collection": col, "crud_op": "delete", "name": item_name, "removed": removed}
+
+    return {"collection": col, "error": f"Unsupported collection '{col}' or operation '{op}'"}
 
 
 def analyze_script(lines: list[str]) -> dict:
@@ -126,13 +588,15 @@ def analyze_script(lines: list[str]) -> dict:
 
 def execute_script_lines(lines: list[str], actor: str = "inspect") -> dict:
     source = "\n".join(lines) if lines else "pass"
-    ns: dict = {
-        "__builtins__": SAFE_BUILTINS,
-        "largest_prime": STATE["largest_prime"],
-        "candidate": STATE["candidate"],
-        "largest_fib": STATE["largest_fib"],
-        "fib_candidate": STATE["fib_candidate"],
-    }
+    ns = compile_ast_namespace(
+        STATE["ast_functions"],
+        extra_globals={
+            "largest_prime": STATE["largest_prime"],
+            "candidate": STATE["candidate"],
+            "largest_fib": STATE["largest_fib"],
+            "fib_candidate": STATE["fib_candidate"],
+        },
+    )
     exec_ok = True
     exec_error = None
 
@@ -203,6 +667,18 @@ def execute_script_lines(lines: list[str], actor: str = "inspect") -> dict:
     }
 
 
+def reset_script_lines(actor: str = "inspect") -> dict:
+    STATE["script"] = list(DEFAULT_SCRIPT)
+    STATE["script_version"] = STATE.get("script_version", 1) + 1
+    STATE["last_mode"] = "script:reset"
+    STATE["last_actor"] = actor
+    return {
+        "reset_script": True,
+        "script_version": STATE["script_version"],
+        "script": list(STATE["script"]),
+    }
+
+
 def _parse_value(raw: str):
     low = raw.strip().lower()
     if low == "true":
@@ -261,6 +737,7 @@ def reset_state_data() -> dict:
     fresh = default_state()
     STATE.clear()
     STATE.update(fresh)
+    _COMPILED_CACHE.clear()
     if os.path.exists(STATE_FILE):
         try:
             os.remove(STATE_FILE)
@@ -300,11 +777,11 @@ def get_property_options(prop: str | None = None) -> dict:
     }
 
 
-def call_url(url: str, method: str = "GET", reader: str = "inspect") -> dict:
+def call_url(url: str, method: str = "GET", reader: str = "inspect", timeout: float = 8.0) -> dict:
     STATE["reading_peer"] = True
     try:
         req = Request(url, data=None, headers={"X-Reader": reader}, method=method)
-        with urlopen(req, timeout=3.0) as resp:
+        with urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read().decode("utf-8"))
     finally:
         STATE["reading_peer"] = False
@@ -325,11 +802,33 @@ def _sync_from_peer() -> dict:
         "document",
         "script",
         "script_version",
+        "ast_functions",
         "last_mode",
     ):
         if k in peer and peer[k] is not None:
             STATE[k] = peer[k]
     return peer
+
+
+def _dynamic_ast_links(reader: str = "client") -> dict:
+    dyn: dict[str, dict] = {}
+    discovered = discover_ast_functions(STATE["ast_functions"])
+    for fn_name, meta in discovered.items():
+        rel_local = f"ast_fn_{fn_name}"
+        rel_peer = f"peer_ast_fn_{fn_name}"
+        dyn[rel_local] = {
+            "href": f"{INSPECT_HOST}/fn/{quote(fn_name)}?reader={reader}",
+            "method": "POST",
+            "ast_entry": meta["entry_name"],
+            "params": meta["params"],
+        }
+        dyn[rel_peer] = {
+            "href": f"{MUTATE_HOST}/fn/{quote(fn_name)}?reader=inspect",
+            "method": "POST",
+            "ast_entry": meta["entry_name"],
+            "params": meta["params"],
+        }
+    return dyn
 
 
 def _script_links(reader: str = "client") -> dict:
@@ -338,10 +837,14 @@ def _script_links(reader: str = "client") -> dict:
     return {
         "self": {"href": f"{INSPECT_HOST}/script?reader={reader}", "method": "GET"},
         "inspect_script": {"href": f"{INSPECT_HOST}/script/inspect?reader={reader}", "method": "GET"},
+        "reset_script": {"href": f"{INSPECT_HOST}/script/reset?reader={reader}", "method": "POST"},
+        "peer_reset_script": {"href": f"{MUTATE_HOST}/script/reset?reader=inspect", "method": "POST"},
         "exec_script_here": {"href": f"{INSPECT_HOST}/script/exec?reader={reader}", "method": "POST"},
         "peer_exec_script": {"href": f"{MUTATE_HOST}/script/exec?reader=inspect", "method": "POST"},
-        "peer_script": {"href": f"{MUTATE_HOST}/script?reader=inspect", "method": "GET"},
-        "peer_inspect_script": {"href": f"{MUTATE_HOST}/script/inspect?reader=inspect", "method": "GET"},
+        "ast_crud": {"href": f"{INSPECT_HOST}/ast?action=list&reader={reader}", "method": "GET"},
+        "peer_ast_crud": {"href": f"{MUTATE_HOST}/ast?action=list&reader=inspect", "method": "GET"},
+        "list_crud": {"href": f"{INSPECT_HOST}/list_crud?collection=script&action=list&reader={reader}", "method": "GET"},
+        "peer_list_crud": {"href": f"{MUTATE_HOST}/list_crud?collection=script&action=list&reader=inspect", "method": "GET"},
         "mutate_append_step": {
             "href": f"{MUTATE_HOST}/script/mutate?op=append_step&line={quote(f'next_fib_target = {nxt_fib}')}&reader=inspect",
             "method": "POST",
@@ -355,6 +858,7 @@ def _script_links(reader: str = "client") -> dict:
             "method": "POST",
         },
         "peer_base": {"href": f"{MUTATE_HOST}/?reader=inspect", "method": "GET"},
+        **_dynamic_ast_links(reader=reader),
     }
 
 
@@ -374,9 +878,14 @@ def _two_way_links(reader: str = "client", prop: str = "largest_fib", val: str =
         "peer_fib": {"href": f"{MUTATE_HOST}/fib?n={fc}&reader=inspect", "method": "GET"},
         "script": {"href": f"{INSPECT_HOST}/script?reader={reader}", "method": "GET"},
         "inspect_script": {"href": f"{INSPECT_HOST}/script/inspect?reader={reader}", "method": "GET"},
+        "reset_script": {"href": f"{INSPECT_HOST}/script/reset?reader={reader}", "method": "POST"},
+        "peer_reset_script": {"href": f"{MUTATE_HOST}/script/reset?reader=inspect", "method": "POST"},
         "exec_script": {"href": f"{INSPECT_HOST}/script/exec?reader={reader}", "method": "POST"},
         "peer_exec_script": {"href": f"{MUTATE_HOST}/script/exec?reader=inspect", "method": "POST"},
-        "peer_script": {"href": f"{MUTATE_HOST}/script?reader=inspect", "method": "GET"},
+        "ast_crud": {"href": f"{INSPECT_HOST}/ast?action=list&reader={reader}", "method": "GET"},
+        "peer_ast_crud": {"href": f"{MUTATE_HOST}/ast?action=list&reader=inspect", "method": "GET"},
+        "list_crud": {"href": f"{INSPECT_HOST}/list_crud?collection=ast_functions&action=list&reader={reader}", "method": "GET"},
+        "peer_list_crud": {"href": f"{MUTATE_HOST}/list_crud?collection=ast_functions&action=list&reader=inspect", "method": "GET"},
         "options": {"href": f"{INSPECT_HOST}/options?prop={q_prop}", "method": "GET"},
         "peer_options": {"href": f"{MUTATE_HOST}/options?prop={q_prop}&reader=inspect", "method": "GET"},
         "set_value": {"href": f"{INSPECT_HOST}/set?prop={q_prop}&val={q_val}", "method": "POST"},
@@ -389,6 +898,7 @@ def _two_way_links(reader: str = "client", prop: str = "largest_fib", val: str =
         "peer_reset_state": {"href": f"{MUTATE_HOST}/reset?reader=inspect", "method": "POST"},
         "peer_callback": {"href": f"{MUTATE_HOST}/callback?from=inspect&trigger=post", "method": "POST"},
         "peer_loop": {"href": f"{MUTATE_HOST}/loop?hops=5", "method": "GET"},
+        **_dynamic_ast_links(reader=reader),
     }
 
 
@@ -399,7 +909,16 @@ def _callback_response_for_post(trigger_action: str, post_summary: dict, reader:
     except Exception:
         peer_state = {}
 
-    for k in ("largest_prime", "candidate", "largest_fib", "fib_candidate", "script", "script_version", "last_mode"):
+    for k in (
+        "largest_prime",
+        "candidate",
+        "largest_fib",
+        "fib_candidate",
+        "script",
+        "script_version",
+        "ast_functions",
+        "last_mode",
+    ):
         if k in peer_state and peer_state[k] is not None:
             STATE[k] = peer_state[k]
 
@@ -447,6 +966,7 @@ def _callback_response_for_post(trigger_action: str, post_summary: dict, reader:
             "fib_candidate": STATE["fib_candidate"],
             "script": STATE["script"],
             "script_version": STATE["script_version"],
+            "ast_count": len(STATE["ast_functions"]),
         },
     }
 
@@ -493,6 +1013,7 @@ def inspect_and_decide(reader: str = "client", target_n: int | None = None, targ
     prime_flag = is_prime(n)
     fib_flag = is_fibonacci(fn)
     script_analysis = analyze_script(STATE["script"])
+    discovered = discover_ast_functions(STATE["ast_functions"])
     peer_mode = peer.get("last_mode", STATE["last_mode"])
 
     if not script_analysis["syntax_ok"]:
@@ -508,8 +1029,9 @@ def inspect_and_decide(reader: str = "client", target_n: int | None = None, targ
         policy = "after_fib_step_advance_prime"
         suggest_prop, suggest_val = "largest_prime", str(next_prime_after(STATE["largest_prime"]))
     else:
-        recommended_rel = "peer_fib"
-        policy = "inspect_prime_and_fib_handoff"
+        custom_fn = next((k for k in discovered if k not in DEFAULT_AST_SOURCES), None)
+        recommended_rel = f"ast_fn_{custom_fn}" if custom_fn else "peer_fib"
+        policy = "dynamic_ast_fn_handoff" if custom_fn else "inspect_prime_and_fib_handoff"
         suggest_prop, suggest_val = "fib_candidate", str(next_fib_after(STATE["largest_fib"]))
 
     links = _two_way_links(reader=reader, prop=suggest_prop, val=suggest_val)
@@ -525,6 +1047,11 @@ def inspect_and_decide(reader: str = "client", target_n: int | None = None, targ
             "line_count": script_analysis["line_count"],
             "syntax_ok": script_analysis["syntax_ok"],
             "assigned_vars": script_analysis["assigned_vars"],
+        },
+        "ast_summary": {
+            "count": len(STATE["ast_functions"]),
+            "names": [e["name"] for e in STATE["ast_functions"]],
+            "discovered_functions": list(discovered.keys()),
         },
         "recommended_rel": recommended_rel,
         "next_instruction": {
@@ -572,6 +1099,33 @@ class InspectHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _handle_dynamic_fn(self, fn_name: str, qs: dict, reader: str, method: str) -> None:
+        discovered = discover_ast_functions(STATE["ast_functions"])
+        if fn_name not in discovered:
+            self._send_json({"error": f"Dynamic AST function '{fn_name}' not found", "available": list(discovered.keys())}, status=404)
+            return
+        args_raw = qs.get("args", [None])[0]
+        parsed_args = json.loads(args_raw) if args_raw else []
+        if not isinstance(parsed_args, list):
+            parsed_args = [parsed_args]
+        for k, v in qs.items():
+            if k not in ("reader", "args", "trigger") and v:
+                parsed_args.append(_coerce_arg(v[0]))
+        res = invoke_ast_function(fn_name, args=parsed_args, actor=reader)
+        payload = {
+            "from": "inspect",
+            "reader": reader,
+            "method": method,
+            "dynamic_ast_endpoint": f"/fn/{fn_name}",
+            "post_result": res,
+            **res,
+            "callback_href": f"{MUTATE_HOST}/callback?from=inspect&trigger=fn:{quote(fn_name)}",
+            "callback_method": "POST",
+            "recommended_rel": f"peer_ast_fn_{fn_name}",
+            "_links": _two_way_links(reader=reader),
+        }
+        self._send_json(payload)
+
     def do_GET(self):
         parsed = urlparse(self.path)
         qs = parse_qs(parsed.query)
@@ -580,6 +1134,19 @@ class InspectHandler(BaseHTTPRequestHandler):
         val = qs.get("val", [None])[0]
         hops = int(qs.get("hops", ["6"])[0])
         n_val = int(qs["n"][0]) if "n" in qs else None
+
+        if parsed.path.startswith("/fn/"):
+            fn_name = parsed.path[len("/fn/"):].strip("/")
+            self._handle_dynamic_fn(fn_name, qs, reader, "GET")
+            return
+        if parsed.path == "/fn":
+            self._send_json({
+                "from": "inspect",
+                "reader": reader,
+                "discovered_functions": list(discover_ast_functions(STATE["ast_functions"]).values()),
+                "_links": _two_way_links(reader=reader),
+            })
+            return
 
         if parsed.path == "/peer":
             self._send_json({
@@ -591,10 +1158,38 @@ class InspectHandler(BaseHTTPRequestHandler):
                 "document": STATE["document"],
                 "script": STATE["script"],
                 "script_version": STATE["script_version"],
+                "ast_functions": STATE["ast_functions"],
                 "last_mode": STATE["last_mode"],
                 "last_actor": STATE["last_actor"],
                 "reading_peer": STATE["reading_peer"],
                 "saved_at": STATE["saved_at"],
+            })
+        elif parsed.path in ("/ast", "/ast/crud"):
+            op = qs.get("action", qs.get("op", ["list"]))[0]
+            name = qs.get("name", [None])[0]
+            source = qs.get("source", [None])[0]
+            args_raw = qs.get("args", [None])[0]
+            pipe_mode = qs.get("pipe_mode", [None])[0]
+            res = ast_crud(op=op, name=name, source=source, args_raw=args_raw, pipe_mode=pipe_mode, actor=reader)
+            self._send_json({
+                "from": "inspect",
+                "reader": reader,
+                **res,
+                "recommended_rel": "peer_ast_crud",
+                "_links": _two_way_links(reader=reader),
+            })
+        elif parsed.path == "/list_crud":
+            col = qs.get("collection", ["script"])[0]
+            op = qs.get("action", qs.get("op", ["list"]))[0]
+            item_name = qs.get("name", [None])[0]
+            value_raw = qs.get("value", qs.get("source", [None]))[0]
+            res = named_list_crud(collection=col, op=op, item_name=item_name, value_raw=value_raw, actor=reader)
+            self._send_json({
+                "from": "inspect",
+                "reader": reader,
+                **res,
+                "recommended_rel": "peer_list_crud",
+                "_links": _two_way_links(reader=reader),
             })
         elif parsed.path == "/fib":
             _sync_from_peer()
@@ -671,8 +1266,68 @@ class InspectHandler(BaseHTTPRequestHandler):
         reader = qs.get("reader", ["client"])[0]
         trigger_action = qs.get("trigger", [parsed.path])[0]
 
+        if parsed.path.startswith("/fn/"):
+            fn_name = parsed.path[len("/fn/"):].strip("/")
+            self._handle_dynamic_fn(fn_name, qs, reader, "POST")
+            return
+
         if parsed.path == "/callback":
             self._send_json(_callback_response_for_post(trigger_action=trigger_action, post_summary={"path": parsed.path}, reader=reader))
+            return
+
+        if parsed.path in ("/ast", "/ast/crud"):
+            op = qs.get("action", qs.get("op", ["eval"]))[0]
+            name = qs.get("name", [None])[0]
+            source = qs.get("source", [None])[0]
+            args_raw = qs.get("args", [None])[0]
+            pipe_mode = qs.get("pipe_mode", [None])[0]
+            res = ast_crud(op=op, name=name, source=source, args_raw=args_raw, pipe_mode=pipe_mode, actor=reader)
+            self._send_json({
+                "from": "inspect",
+                "reader": reader,
+                "post_body_required": False,
+                "post_result": res,
+                **res,
+                "callback_href": f"{MUTATE_HOST}/callback?from=inspect&trigger=ast:{quote(str(op))}",
+                "callback_method": "POST",
+                "recommended_rel": "peer_callback",
+                "_links": _two_way_links(reader=reader),
+            })
+            return
+
+        if parsed.path == "/list_crud":
+            col = qs.get("collection", ["script"])[0]
+            op = qs.get("action", qs.get("op", ["list"]))[0]
+            item_name = qs.get("name", [None])[0]
+            value_raw = qs.get("value", qs.get("source", [None]))[0]
+            res = named_list_crud(collection=col, op=op, item_name=item_name, value_raw=value_raw, actor=reader)
+            self._send_json({
+                "from": "inspect",
+                "reader": reader,
+                "post_body_required": False,
+                "post_result": res,
+                **res,
+                "callback_href": f"{MUTATE_HOST}/callback?from=inspect&trigger=list:{quote(col)}:{quote(op)}",
+                "callback_method": "POST",
+                "recommended_rel": "peer_callback",
+                "_links": _two_way_links(reader=reader),
+            })
+            return
+
+        if parsed.path == "/script/reset":
+            reset_res = reset_script_lines(actor=reader)
+            self._send_json({
+                "from": "inspect",
+                "reader": reader,
+                "post_body_required": False,
+                "action": "reset_script",
+                "post_result": reset_res,
+                **reset_res,
+                "callback_href": f"{MUTATE_HOST}/callback?from=inspect&trigger=script:reset",
+                "callback_method": "POST",
+                "recommended_rel": "peer_callback",
+                "_links": _script_links(reader=reader),
+            })
             return
 
         if parsed.path == "/script/exec":
@@ -774,10 +1429,11 @@ class InspectHandler(BaseHTTPRequestHandler):
             self._send_json({"error": "Not found"}, status=404)
 
     def log_message(self, format, *args):
-        print(f"[INSPECT :8001] {format % args}")
+        stream_log(f"[INSPECT :8001] {format % args}", lock_path=LOCK_FILE)
 
 
 if __name__ == "__main__":
     server = ThreadingHTTPServer(("127.0.0.1", 8001), InspectHandler)
-    print("Callback-driven HATEOAS Inspect server on http://127.0.0.1:8001")
+    server.daemon_threads = True
+    stream_log("Callback-driven HATEOAS Inspect server on http://127.0.0.1:8001", lock_path=LOCK_FILE)
     server.serve_forever()
