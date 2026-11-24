@@ -1,13 +1,68 @@
 import argparse
 import copy
 import json
+import os
+import sys
+import threading
 import time
+from contextlib import contextmanager
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlparse
 from urllib.request import Request, urlopen
 
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
+
 INSPECT_DEFAULT = "http://127.0.0.1:8001"
 MUTATE_DEFAULT = "http://127.0.0.1:8002"
+LOCK_DEFAULT = "hateoas_io.lock"
+
+_THREAD_LOG_LOCK = threading.Lock()
+
+
+@contextmanager
+def shared_line_lock(lock_path: str = LOCK_DEFAULT, timeout: float = 5.0):
+    os.makedirs(os.path.dirname(os.path.abspath(lock_path)) or ".", exist_ok=True)
+    with _THREAD_LOG_LOCK:
+        f = open(lock_path, "a+", encoding="utf-8")
+        deadline = time.monotonic() + timeout
+        acquired = False
+        try:
+            while True:
+                try:
+                    if os.name == "nt":
+                        f.seek(0)
+                        msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+                    else:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    acquired = True
+                    break
+                except OSError:
+                    if time.monotonic() >= deadline:
+                        break
+                    time.sleep(0.01)
+            yield
+        finally:
+            if acquired:
+                try:
+                    if os.name == "nt":
+                        f.seek(0)
+                        msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
+                    else:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                except OSError:
+                    pass
+            f.close()
+
+
+BUILTIN_AST_FNS = {
+    "is_prime",
+    "next_prime_after",
+    "is_fibonacci",
+    "next_fib_after",
+}
 
 REL_TO_PROPERTY = {
     "peer_set_value": "candidate",
@@ -31,14 +86,34 @@ REL_TO_PROPERTY = {
 }
 
 
-def log_status(msg: str) -> None:
-    print(msg, flush=True)
+def log_status(msg: str, lock_path: str = LOCK_DEFAULT) -> None:
+    for line in str(msg).splitlines() or [""]:
+        with shared_line_lock(lock_path=lock_path):
+            sys.stdout.write(f"{line}\n")
+            sys.stdout.flush()
 
 
-def req_json(url: str, method: str = "GET", reader: str = "client", timeout: float = 5.0) -> dict:
-    req = Request(url, data=None, headers={"X-Reader": reader}, method=method)
-    with urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+def req_json(
+    url: str,
+    method: str = "GET",
+    reader: str = "client",
+    timeout: float = 15.0,
+    retries: int = 2,
+) -> dict:
+    last_exc: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            req = Request(url, data=None, headers={"X-Reader": reader}, method=method)
+            with urlopen(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except (TimeoutError, URLError, OSError) as exc:
+            last_exc = exc
+            if attempt < retries:
+                time.sleep(0.2 * (attempt + 1))
+                continue
+            raise
+    assert last_exc is not None
+    raise last_exc
 
 
 def execute_post_with_callback(post_href: str, reader: str) -> tuple[dict, dict | None]:
@@ -52,6 +127,75 @@ def execute_post_with_callback(post_href: str, reader: str) -> tuple[dict, dict 
         cb_link = post_doc["_links"]["peer_callback"]
         cb_doc = req_json(cb_link["href"], method=cb_link.get("method", "POST").upper(), reader=reader)
     return post_doc, cb_doc
+
+
+def discover_custom_ast_links(doc: dict) -> list[tuple[str, str, str]]:
+    if not isinstance(doc, dict):
+        return []
+    links = doc.get("_links")
+    if not isinstance(links, dict):
+        return []
+
+    found: list[tuple[str, str, str]] = []
+    seen_hrefs: set[str] = set()
+
+    for rel, link in links.items():
+        if not isinstance(link, dict) or not link.get("href"):
+            continue
+        fn_name = None
+        if rel.startswith("ast_fn_"):
+            fn_name = rel[len("ast_fn_"):]
+        elif rel.startswith("peer_ast_fn_"):
+            fn_name = rel[len("peer_ast_fn_"):]
+
+        if not fn_name or fn_name in BUILTIN_AST_FNS:
+            continue
+
+        href = link["href"]
+        method = (link.get("method") or "POST").upper()
+        if href not in seen_hrefs:
+            seen_hrefs.add(href)
+            found.append((rel, method, href))
+
+    return found
+
+
+def invoke_discovered_custom_ast_fns(
+    docs: list[dict],
+    hop_index: int,
+    reader: str,
+    lock_path: str = LOCK_DEFAULT,
+) -> tuple[list[dict], dict]:
+    all_custom: list[tuple[str, str, str]] = []
+    seen_hrefs: set[str] = set()
+    for doc in docs:
+        for rel, method, href in discover_custom_ast_links(doc):
+            if href not in seen_hrefs:
+                seen_hrefs.add(href)
+                all_custom.append((rel, method, href))
+
+    results: list[dict] = []
+    merged_state: dict = {}
+
+    for rel, method, href in all_custom:
+        if method == "POST":
+            fn_doc, fn_cb = execute_post_with_callback(href, reader=reader)
+            effective_doc = fn_cb or fn_doc
+        else:
+            fn_doc = req_json(href, method=method, reader=reader)
+            effective_doc = fn_doc
+
+        results.append(effective_doc)
+        merged_state.update(extract_comparable_state(fn_doc))
+        merged_state.update(extract_comparable_state(effective_doc))
+
+        log_status(
+            f"[HOP {hop_index:03d} | ASTFN] Auto-invoked [{rel}] {method} {href} -> "
+            f"result={json.dumps(fn_doc.get('result'))} mutated={json.dumps(fn_doc.get('mutated_fields', {}))}",
+            lock_path=lock_path,
+        )
+
+    return results, merged_state
 
 
 def extract_comparable_state(doc: dict) -> dict:
@@ -229,12 +373,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
             "Run a body-free POST -> HATEOAS callback -> GET peer state -> POST /script/mutate -> "
-            "OUTPUT TO POST + next_instruction loop with /script/exec, distinct /options values, "
-            "JSON state diffs, flushed output, timeout, and reset."
+            "OUTPUT TO POST + next_instruction loop with automatic discovery & invocation of custom "
+            "ast_fn_<name> /fn/<name> endpoints, /ast CRUD/pipe, /list_crud, /script/exec, /script/reset, "
+            "distinct /options values, JSON state diffs, and reset."
         )
     )
     parser.add_argument("--inspect-base", default=INSPECT_DEFAULT, help="Inspect server base URL")
     parser.add_argument("--mutate-base", default=MUTATE_DEFAULT, help="Mutate server base URL")
+    parser.add_argument("--lock-file", default=LOCK_DEFAULT, help="Shared lock file path for line streaming")
     parser.add_argument(
         "--server",
         choices=["inspect", "mutate"],
@@ -275,6 +421,11 @@ def main() -> None:
         help="Skip invoking POST /script/exec during hops",
     )
     parser.add_argument(
+        "--no-custom-ast-fns",
+        action="store_true",
+        help="Skip automatically invoking discovered custom ast_fn_<name> /fn/<name> endpoints",
+    )
+    parser.add_argument(
         "--json-diff",
         action="store_true",
         help="Print structured JSON diff objects in addition to compact diff lines",
@@ -293,6 +444,7 @@ def main() -> None:
 
     insp_base = args.inspect_base.rstrip("/")
     mut_base = args.mutate_base.rstrip("/")
+    lock_path = args.lock_file
     primary_base = insp_base if args.server == "inspect" else mut_base
     peer_base = mut_base if args.server == "inspect" else insp_base
 
@@ -310,8 +462,9 @@ def main() -> None:
         entry = {"label": label, "diff": diff}
         all_diffs.append(entry)
         if args.diff_log:
-            with open(args.diff_log, "a", encoding="utf-8") as f:
-                f.write(json.dumps(entry) + "\n")
+            with shared_line_lock(lock_path=lock_path):
+                with open(args.diff_log, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(entry) + "\n")
         return diff
 
     start_time = time.monotonic()
@@ -323,7 +476,10 @@ def main() -> None:
     try:
         baseline_peer = req_json(f"{peer_base}/peer", method="GET")
         tracked_state = extract_comparable_state(baseline_peer)
-        log_status(f"[BASE] Initial state={json.dumps(tracked_state)}")
+        log_status(f"[BASE] Initial state={json.dumps(tracked_state)}", lock_path=lock_path)
+
+        ast_list_doc = req_json(f"{primary_base}/ast?action=list&reader={args.server}", method="GET")
+        log_status(f"[AST ] Loaded AST functions count={ast_list_doc.get('count')}", lock_path=lock_path)
 
         q_prop = quote(args.prop)
         opts_doc = req_json(f"{primary_base}/options?prop={q_prop}", method="GET")
@@ -352,31 +508,36 @@ def main() -> None:
         )
         log_status(
             f"[SET ] Body-free POST -> callback_next={(set_cb_doc or {}).get('next_instruction', {}).get('rel')} "
-            f"| DIFF: {format_diff_compact(init_diff)}"
+            f"| DIFF: {format_diff_compact(init_diff)}",
+            lock_path=lock_path,
         )
 
         save_doc, save_cb_doc = execute_post_with_callback(
             f"{primary_base}/save?reader={args.server}",
             reader=args.server,
         )
-        log_status(f"[SAVE] Body-free POST saved={save_doc.get('post_result', {}).get('saved')}")
+        log_status(
+            f"[SAVE] Body-free POST saved={save_doc.get('post_result', {}).get('saved')}",
+            lock_path=lock_path,
+        )
 
         current_doc = save_cb_doc or req_json(f"{peer_base}/?reader={args.server}", method="GET", reader=args.server)
         log_status(
             f"[LOOP] Starting callback loop (timeout={args.timeout_seconds}s, "
-            f"max_hops={'infinite' if args.max_hops <= 0 else args.max_hops})"
+            f"max_hops={'infinite' if args.max_hops <= 0 else args.max_hops})",
+            lock_path=lock_path,
         )
 
         while True:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 stop_reason = f"timeout after {args.timeout_seconds:.2f}s"
-                log_status(f"[LOOP] Timeout reached ({stop_reason}); stopping loop.")
+                log_status(f"[LOOP] Timeout reached ({stop_reason}); stopping loop.", lock_path=lock_path)
                 break
 
             if args.max_hops > 0 and hop >= args.max_hops:
                 stop_reason = f"max_hops ({args.max_hops}) reached"
-                log_status(f"[LOOP] {stop_reason}; stopping loop.")
+                log_status(f"[LOOP] {stop_reason}; stopping loop.", lock_path=lock_path)
                 break
 
             hop += 1
@@ -385,18 +546,32 @@ def main() -> None:
 
             log_status(
                 f"[HOP {hop:03d} | +{elapsed:5.2f}s | rem={remaining:5.2f}s] "
-                f"Instruction [{rec_rel}] {target_method} {target_href}"
+                f"Instruction [{rec_rel}] {target_method} {target_href}",
+                lock_path=lock_path,
             )
 
+            hop_docs: list[dict] = [current_doc]
             if target_method == "POST":
                 step_doc, cb_doc = execute_post_with_callback(target_href, reader=args.server)
+                hop_docs.extend([step_doc, cb_doc or {}])
                 current_doc = cb_doc or step_doc
                 log_status(
                     f"[HOP {hop:03d} | CB  ] POST->callback->GET_PEER->POST_SCRIPT->OUTPUT -> "
-                    f"end_next={(current_doc.get('next_instruction') or {}).get('rel')}"
+                    f"end_next={(current_doc.get('next_instruction') or {}).get('rel')}",
+                    lock_path=lock_path,
                 )
             else:
                 current_doc = req_json(target_href, method=target_method, reader=args.server)
+                hop_docs.append(current_doc)
+
+            custom_ast_state: dict = {}
+            if not args.no_custom_ast_fns:
+                _, custom_ast_state = invoke_discovered_custom_ast_fns(
+                    docs=hop_docs,
+                    hop_index=hop,
+                    reader=args.server,
+                    lock_path=lock_path,
+                )
 
             parsed_target = urlparse(target_href)
             target_base = (
@@ -404,6 +579,13 @@ def main() -> None:
                 if parsed_target.scheme and parsed_target.netloc
                 else peer_base
             )
+
+            ast_pipe_doc = req_json(
+                f"{target_base}/ast?action=pipe&name=next_fib_after&args={quote(json.dumps([tracked_state.get('largest_fib', 1)]))}&pipe_mode=json_stream&reader={args.server}",
+                method="GET",
+                reader=args.server,
+            )
+            log_status(f"[HOP {hop:03d} | PIPE] {ast_pipe_doc.get('piped_line')}", lock_path=lock_path)
 
             exec_doc = None
             exec_cb_doc = None
@@ -414,7 +596,8 @@ def main() -> None:
                 )
                 log_status(
                     f"[HOP {hop:03d} | EXEC] {target_base}/script/exec -> "
-                    f"exec_ok={exec_doc.get('exec_ok')} updated_vars={exec_doc.get('updated_vars')}"
+                    f"exec_ok={exec_doc.get('exec_ok')} updated_vars={exec_doc.get('updated_vars')}",
+                    lock_path=lock_path,
                 )
 
             hop_next = (exec_cb_doc or current_doc).get("next_instruction") or {}
@@ -443,6 +626,7 @@ def main() -> None:
             current_doc = set_hop_cb or set_hop_doc
 
             hop_state = {
+                **custom_ast_state,
                 **extract_comparable_state(current_doc),
                 **extract_comparable_state(set_hop_doc),
                 **extract_comparable_state(exec_doc or {}),
@@ -453,43 +637,47 @@ def main() -> None:
             log_status(
                 f"[HOP {hop:03d} | DIFF] picked={distinct_val} | "
                 f"next={(current_doc.get('next_instruction') or {}).get('rel')} | "
-                f"{format_diff_compact(hop_diff)}"
+                f"{format_diff_compact(hop_diff)}",
+                lock_path=lock_path,
             )
             if args.json_diff:
-                log_status(f"[HOP {hop:03d} | JSON] {json.dumps(hop_diff)}")
+                log_status(f"[HOP {hop:03d} | JSON] {json.dumps(hop_diff)}", lock_path=lock_path)
 
             if args.step_delay > 0:
                 time.sleep(min(args.step_delay, max(0.0, deadline - time.monotonic())))
 
     except KeyboardInterrupt:
         stop_reason = "interrupted by user (KeyboardInterrupt)"
-        log_status(f"\n[LOOP] {stop_reason}; stopping loop.")
+        log_status(f"\n[LOOP] {stop_reason}; stopping loop.", lock_path=lock_path)
+    except (TimeoutError, URLError, OSError) as exc:
+        stop_reason = f"network/timeout error: {exc}"
+        log_status(f"[WARN] {stop_reason}; stopping loop cleanly.", lock_path=lock_path)
     except HTTPError as exc:
         err_body = exc.read().decode("utf-8", errors="replace")
-        log_status(f"[ERROR] HTTP {exc.code}: {err_body}")
-        raise SystemExit(1) from exc
-    except URLError as exc:
-        log_status(f"[ERROR] Connection failed: {exc.reason}")
-        log_status("Ensure both inspect_server.py (:8001) and mutate_server.py (:8002) are running.")
+        log_status(f"[ERROR] HTTP {exc.code}: {err_body}", lock_path=lock_path)
         raise SystemExit(1) from exc
 
     log_status(
         f"\n[SUMMARY] Hops={hop} | DiffEvents={len(all_diffs)} | "
-        f"Elapsed={time.monotonic() - start_time:.2f}s | Stop={stop_reason}"
+        f"Elapsed={time.monotonic() - start_time:.2f}s | Stop={stop_reason}",
+        lock_path=lock_path,
     )
 
     if not args.skip_reset:
         try:
+            execute_post_with_callback(f"{primary_base}/script/reset", reader="client")
+            execute_post_with_callback(f"{peer_base}/script/reset", reader="client")
             reset_primary, _ = execute_post_with_callback(f"{primary_base}/reset", reader="client")
             reset_peer, _ = execute_post_with_callback(f"{peer_base}/reset", reader="client")
             log_status(
                 f"[RESET] {primary_base}/reset -> {reset_primary.get('post_result', {}).get('reset')} | "
-                f"{peer_base}/reset -> {reset_peer.get('post_result', {}).get('reset')}"
+                f"{peer_base}/reset -> {reset_peer.get('post_result', {}).get('reset')}",
+                lock_path=lock_path,
             )
         except Exception as exc:
-            log_status(f"[RESET] Warning during reset: {exc}")
+            log_status(f"[RESET] Warning during reset: {exc}", lock_path=lock_path)
     else:
-        log_status("[RESET] Skipped (--skip-reset)")
+        log_status("[RESET] Skipped (--skip-reset)", lock_path=lock_path)
 
 
 if __name__ == "__main__":
